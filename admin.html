@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OrgDesignScan — Question Editor</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .admin-header {
+      padding: 16px 0 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 32px;
+    }
+    .admin-header .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .admin-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .q-editor {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 28px 32px;
+      margin-bottom: 16px;
+      border: 1.5px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .q-editor:focus-within {
+      border-color: var(--teal);
+    }
+    .q-editor-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .btn-delete-q {
+      margin-left: auto;
+      background: none;
+      border: 1.5px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .btn-delete-q:hover { border-color: #DC2626; color: #DC2626; background: #FEE2E2; }
+    .q-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--green-light);
+      color: var(--green);
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .q-section-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--teal);
+    }
+    .q-text-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: var(--white);
+      font-size: 1rem;
+      font-family: 'Georgia', serif;
+      color: var(--text);
+      outline: none;
+      resize: vertical;
+      min-height: 56px;
+    }
+    .q-text-input:focus { border-color: var(--teal); }
+
+    .options-editor { margin-top: 16px; }
+    .options-editor-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .option-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .option-input {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: var(--white);
+      font-size: 0.9rem;
+      color: var(--text);
+      font-family: inherit;
+      outline: none;
+    }
+    .option-input:focus { border-color: var(--teal); }
+    .btn-remove-opt {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+      padding: 4px 6px;
+      border-radius: 4px;
+      transition: all 0.15s;
+    }
+    .btn-remove-opt:hover { background: #FEE2E2; color: #DC2626; }
+    .btn-add-opt {
+      background: none;
+      border: 1.5px dashed var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-family: inherit;
+      transition: all 0.15s;
+      margin-top: 4px;
+    }
+    .btn-add-opt:hover { border-color: var(--teal); color: var(--teal); }
+
+    .other-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .other-toggle input { cursor: pointer; accent-color: var(--teal); width: 16px; height: 16px; }
+
+    .save-bar {
+      position: sticky;
+      bottom: 0;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 16px 0;
+      z-index: 50;
+    }
+    .save-bar .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .save-status {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+    .save-status.saved { color: var(--teal); font-weight: 600; }
+    .save-status.unsaved { color: #D97706; font-weight: 600; }
+
+    .reset-link {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+      padding: 0;
+      text-decoration: underline;
+    }
+    .reset-link:hover { color: #DC2626; }
+  </style>
+</head>
+<body>
+
+  <header class="admin-header">
+    <div class="container">
+      <div>
+        <span class="nav-logo" style="font-size:1.4rem;">OrgDesign<span style="color:var(--teal)">Scan</span></span>
+        <span class="admin-title" style="margin-left:16px;">Question Editor</span>
+      </div>
+      <a href="survey.html" target="_blank" class="btn btn-outline" style="font-size:0.85rem; padding:10px 20px;">
+        Preview survey →
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <div class="container" style="padding-bottom: 120px;">
+      <div id="editor-root"></div>
+    </div>
+  </main>
+
+  <div class="save-bar">
+    <div class="container">
+      <div style="display:flex; align-items:center; gap:20px;">
+        <span class="save-status" id="save-status">No unsaved changes</span>
+        <button class="reset-link" id="revert-btn" onclick="revertToLastSaved()" style="display:none">Revert to last saved</button>
+      </div>
+      <button class="btn btn-primary" onclick="saveQuestions()">Save &amp; apply</button>
+    </div>
+  </div>
+
+  <script src="js/questions.js"></script>
+  <script>
+    // Load questions — from localStorage if saved, else from QUESTIONS default
+    function getQuestions() {
+      const stored = localStorage.getItem('ods_questions');
+      if (stored) {
+        try { return JSON.parse(stored); } catch(e) {}
+      }
+      return JSON.parse(JSON.stringify(QUESTIONS)); // deep clone defaults
+    }
+
+    let questions = getQuestions();
+    let dirty = false;
+
+    function markDirty() {
+      dirty = true;
+      const el = document.getElementById('save-status');
+      el.textContent = 'Unsaved changes';
+      el.className = 'save-status unsaved';
+      document.getElementById('revert-btn').style.display = 'inline';
+    }
+
+    function renderEditor() {
+      const root = document.getElementById('editor-root');
+      root.innerHTML = '';
+      questions.forEach((q, qi) => {
+        const div = document.createElement('div');
+        div.className = 'q-editor';
+        div.innerHTML = `
+          <div class="q-editor-top">
+            <div class="q-num">${qi + 1}</div>
+            <span class="q-section-tag">${q.section}</span>
+            <button class="btn-delete-q" onclick="deleteQuestion(${qi})">Delete</button>
+          </div>
+          <textarea class="q-text-input" rows="2" data-qi="${qi}" data-field="text">${escapeHtml(q.text)}</textarea>
+          <div class="options-editor">
+            <div class="options-editor-label">Answer options</div>
+            <div id="opts-${qi}"></div>
+            <button class="btn-add-opt" onclick="addOption(${qi})">+ Add option</button>
+          </div>
+          <label class="other-toggle">
+            <input type="checkbox" ${q.other ? 'checked' : ''} onchange="toggleOther(${qi}, this.checked)" />
+            Include "Other (free text)" option
+          </label>
+        `;
+        root.appendChild(div);
+        renderOptions(qi);
+      });
+
+      // Bind question text changes
+      root.querySelectorAll('textarea[data-field="text"]').forEach(ta => {
+        ta.addEventListener('input', () => {
+          questions[ta.dataset.qi].text = ta.value;
+          markDirty();
+        });
+      });
+    }
+
+    function renderOptions(qi) {
+      const container = document.getElementById(`opts-${qi}`);
+      container.innerHTML = '';
+      questions[qi].options.forEach((opt, oi) => {
+        const row = document.createElement('div');
+        row.className = 'option-row';
+        row.innerHTML = `
+          <input class="option-input" type="text" value="${escapeAttr(opt)}" data-qi="${qi}" data-oi="${oi}" />
+          <button class="btn-remove-opt" onclick="removeOption(${qi}, ${oi})" title="Remove">×</button>
+        `;
+        container.appendChild(row);
+      });
+      // Bind option text changes
+      container.querySelectorAll('.option-input').forEach(inp => {
+        inp.addEventListener('input', () => {
+          questions[inp.dataset.qi].options[inp.dataset.oi] = inp.value;
+          markDirty();
+        });
+      });
+    }
+
+    function addOption(qi) {
+      questions[qi].options.push('');
+      renderOptions(qi);
+      // Focus the new input
+      const inputs = document.querySelectorAll(`#opts-${qi} .option-input`);
+      if (inputs.length) inputs[inputs.length - 1].focus();
+      markDirty();
+    }
+
+    function removeOption(qi, oi) {
+      if (questions[qi].options.length <= 1) return;
+      questions[qi].options.splice(oi, 1);
+      renderOptions(qi);
+      markDirty();
+    }
+
+    function toggleOther(qi, checked) {
+      questions[qi].other = checked;
+      markDirty();
+    }
+
+    function saveQuestions() {
+      localStorage.setItem('ods_questions', JSON.stringify(questions));
+      dirty = false;
+      const el = document.getElementById('save-status');
+      el.textContent = 'Saved ✓';
+      el.className = 'save-status saved';
+      setTimeout(() => {
+        el.textContent = 'No unsaved changes';
+        el.className = 'save-status';
+      }, 2500);
+    }
+
+    function deleteQuestion(qi) {
+      if (!confirm(`Delete question ${qi + 1}? This cannot be undone until you save.`)) return;
+      questions.splice(qi, 1);
+      renderEditor();
+      markDirty();
+    }
+
+    function revertToLastSaved() {
+      if (!confirm('Revert to last saved version? Unsaved changes will be lost.')) return;
+      questions = getQuestions();
+      renderEditor();
+      dirty = false;
+      const el = document.getElementById('save-status');
+      el.textContent = 'Reverted to last saved';
+      el.className = 'save-status saved';
+      document.getElementById('revert-btn').style.display = 'none';
+      setTimeout(() => { el.textContent = 'No unsaved changes'; el.className = 'save-status'; }, 2500);
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    function escapeAttr(str) {
+      return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    }
+
+    // Init
+    renderEditor();
+  </script>
+
+</body>
+</html>

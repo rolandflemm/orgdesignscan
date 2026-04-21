@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OrgDesignScan — Survey</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ── Survey Header ── -->
+  <header class="survey-header">
+    <div class="container">
+      <span class="nav-logo">OrgDesign<span style="color:var(--teal)">Scan</span><br><em style="font-size:1.3rem; font-weight:400; color:var(--text-muted); font-style:italic; letter-spacing:0;">powered by <a href="https://www.orgtopologies.com" target="_blank" rel="noopener" style="color:inherit; text-decoration:none;">Org Topologies</a></em></span>
+      <span class="survey-greeting">Welcome, <strong id="greeting-name"></strong></span>
+    </div>
+  </header>
+
+  <!-- ── Survey Body ── -->
+  <main>
+    <div class="container" style="padding-top: 16px; padding-bottom: 40px;">
+      <div id="survey-container">
+        <!-- Rendered by survey.js -->
+      </div>
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div class="container">
+      <p>© 2025 OrgDesignScan &nbsp;·&nbsp; Powered by <a href="https://orgtopologies.com" target="_blank">Org Topologies</a> &nbsp;·&nbsp; <a href="index.html">Home</a> &nbsp;·&nbsp; <a href="about.html">About</a></p>
+    </div>
+  </footer>
+
+  <!-- API config — add your key here -->
+  <script src="js/config.js" onerror="console.warn('No config.js found — running in demo mode')"></script>
+  <script src="js/questions.js"></script>
+  <script src="js/scorer.js"></script>
+  <script src="js/templates.js"></script>
+  <script src="js/survey.js"></script>
+
+</body>
+</html>
