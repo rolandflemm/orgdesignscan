@@ -173,9 +173,12 @@ function submitSurvey() {
   setTimeout(() => {
     const { topology, scores, confidence } = scoreAnswers(answers);
     const tmpl = TEMPLATES[topology];
-    const name = sessionStorage.getItem('ods_name') || '';
-    const company = sessionStorage.getItem('ods_company') || '';
+    const name     = sessionStorage.getItem('ods_name')     || '';
+    const lastname = sessionStorage.getItem('ods_lastname') || '';
+    const email    = sessionStorage.getItem('ods_email')    || '';
+    const company  = sessionStorage.getItem('ods_company')  || '';
     renderResults(tmpl, name, company, scores, confidence);
+    sendSurveyEmail(tmpl, name, lastname, email, company, answers);
   }, 1200);
 }
 

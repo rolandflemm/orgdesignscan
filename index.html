@@ -9,6 +9,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/emailer.js"></script>
+  <script>initEmailJS();</script>
 </head>
 <body>
 
@@ -234,14 +238,15 @@
     });
     function startSurvey(e) {
       e.preventDefault();
-      const first = document.getElementById('userFirstName').value.trim();
-      const last = document.getElementById('userLastName').value.trim();
-      const email = document.getElementById('userEmail').value.trim();
+      const first   = document.getElementById('userFirstName').value.trim();
+      const last    = document.getElementById('userLastName').value.trim();
+      const email   = document.getElementById('userEmail').value.trim();
       const company = document.getElementById('userCompany').value.trim();
-      sessionStorage.setItem('ods_name', first);
+      sessionStorage.setItem('ods_name',    first);
       sessionStorage.setItem('ods_lastname', last);
-      sessionStorage.setItem('ods_email', email);
+      sessionStorage.setItem('ods_email',   email);
       sessionStorage.setItem('ods_company', company);
+      sendContactEmail(first, last, email, company);
       window.location.href = 'survey.html';
     }
   </script>
