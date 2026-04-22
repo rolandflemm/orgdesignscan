@@ -6,8 +6,8 @@ window.ODS_CONFIG = {
   apiKey: '',   // unused — kept for compatibility
 
   emailjs: {
-    publicKey:  'YOUR_PUBLIC_KEY',    // Account → API Keys
-    serviceId:  'YOUR_SERVICE_ID',    // Email Services tab
-    templateId: 'YOUR_TEMPLATE_ID',   // Email Templates tab
+    publicKey:  'YdqT8-JreFPejxEUEV',    // Account → API Keys
+    serviceId:  'service_d69654p',    // Email Services tab
+    templateId: 'template_vxt56oi',   // Email Templates tab
   },
 };
