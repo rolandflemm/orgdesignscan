@@ -8,7 +8,7 @@ const QUESTIONS = [
   {
     id: 'business_model',
     section: 'Context',
-    text: 'What does your organization make money with?',
+    text: 'How does your organization generate revenue?',
     type: 'single',
     options: [
       'Product sales (physical goods)',
