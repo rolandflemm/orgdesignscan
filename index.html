@@ -39,7 +39,7 @@
         Find out where you stand in 5 minutes.
       </p>
       <div class="hero-cta">
-        <button class="btn btn-primary btn-lg" onclick="openModal()">
+        <button class="btn btn-primary btn-lg" onclick="openModal('survey')">
           Take the free survey
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -158,11 +158,18 @@
     <div class="container">
       <div class="cta-banner">
         <h2>Ready to find out where you stand?</h2>
-        <p>Takes 5 minutes. Instant results.</p>
-        <button class="btn btn-teal btn-lg" onclick="openModal()">
-          Take the free survey
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+        <p>Takes 5 minutes. Instant results. Or talk to us directly.</p>
+        <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+          <button class="btn btn-teal btn-lg" onclick="openModal('survey')">
+            Take the free survey
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="btn btn-lg" onclick="openModal('book')"
+            style="background:rgba(255,255,255,0.12); color:white; border:2px solid rgba(255,255,255,0.5);">
+            Book an appointment
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M11 2v2M5 2v2M2 6h12M3 3h10a1 1 0 011 1v9a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
       </div>
     </div>
   </section>
@@ -178,9 +185,9 @@
   <div class="modal-overlay" id="modal">
     <div class="modal">
       <button class="modal-close" onclick="closeModal()" aria-label="Close">&times;</button>
-      <h2>Let's get started</h2>
-      <p class="modal-sub">Enter your name so we can personalize your diagnosis report.</p>
-      <form id="startForm" onsubmit="startSurvey(event)">
+      <h2 id="modal-title">Let's get started</h2>
+      <p class="modal-sub" id="modal-sub">Enter your details so we can personalize your diagnosis report.</p>
+      <form id="startForm" onsubmit="handleModalSubmit(event)">
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
           <div class="form-group" style="margin-bottom:0;">
             <label for="userFirstName">First name</label>
@@ -199,7 +206,7 @@
           <label for="userCompany">Company name</label>
           <input type="text" id="userCompany" name="company" placeholder="Acme Corp" required autocomplete="organization" />
         </div>
-        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;">
+        <button type="submit" id="modal-submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;">
           Start the survey &rarr;
         </button>
       </form>
@@ -223,7 +230,14 @@
       }
     })();
 
-    function openModal() {
+    var _modalMode = 'survey';
+
+    function openModal(mode) {
+      _modalMode = mode || 'survey';
+      const isBook = _modalMode === 'book';
+      document.getElementById('modal-title').textContent   = isBook ? 'Book an appointment' : 'Let\'s get started';
+      document.getElementById('modal-sub').textContent     = isBook ? 'Enter your details and we\'ll take you straight to our calendar.' : 'Enter your details so we can personalize your diagnosis report.';
+      document.getElementById('modal-submit').textContent  = isBook ? 'Go to calendar →' : 'Start the survey →';
       document.getElementById('modal').classList.add('open');
       document.getElementById('userFirstName').focus();
     }
@@ -236,18 +250,23 @@
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') closeModal();
     });
-    function startSurvey(e) {
+    function handleModalSubmit(e) {
       e.preventDefault();
       const first   = document.getElementById('userFirstName').value.trim();
       const last    = document.getElementById('userLastName').value.trim();
       const email   = document.getElementById('userEmail').value.trim();
       const company = document.getElementById('userCompany').value.trim();
-      sessionStorage.setItem('ods_name',    first);
+      sessionStorage.setItem('ods_name',     first);
       sessionStorage.setItem('ods_lastname', last);
-      sessionStorage.setItem('ods_email',   email);
-      sessionStorage.setItem('ods_company', company);
+      sessionStorage.setItem('ods_email',    email);
+      sessionStorage.setItem('ods_company',  company);
       sendContactEmail(first, last, email, company);
-      window.location.href = 'survey.html';
+      if (_modalMode === 'book') {
+        window.open('https://calendly.com/roland-flemm/30min?back=1', '_blank');
+        closeModal();
+      } else {
+        window.location.href = 'survey.html';
+      }
     }
   </script>
 
