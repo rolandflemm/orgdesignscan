@@ -273,9 +273,14 @@ function sendReportToUser(tmpl, firstname, lastname, email, company) {
         <!-- CTA -->
         <div style="background:#4338CA;border-radius:8px;padding:24px 28px;">
           <h2 style="color:white;font-size:16px;margin:0 0 8px;">Next step: 1-day On-site OrgDesignScan</h2>
-          <p style="color:rgba(255,255,255,0.85);font-size:13px;margin:0 0 12px;line-height:1.6;">${_e(tmpl.onsiteValue)}</p>
-          <p style="color:rgba(255,255,255,0.6);font-size:12px;margin:0;">
-            <a href="https://10xorg.com" style="color:#93C5FD;">10xorg.com</a> &nbsp;·&nbsp; Powered by Org Topologies™
+          <p style="color:rgba(255,255,255,0.85);font-size:13px;margin:0 0 20px;line-height:1.6;">${_e(tmpl.onsiteValue)}</p>
+          <a href="https://calendly.com/roland-flemm/30min?back=1"
+            style="display:inline-block;background:white;color:#4338CA;font-weight:700;font-size:14px;
+                   padding:12px 24px;border-radius:6px;text-decoration:none;">
+            Book a free appointment →
+          </a>
+          <p style="color:rgba(255,255,255,0.5);font-size:12px;margin:16px 0 0;">
+            Powered by Org Topologies™
           </p>
         </div>
 
