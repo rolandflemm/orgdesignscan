@@ -94,7 +94,7 @@ function renderQuestion() {
         <div class="question-number">Question ${currentIndex + 1}</div>
         <div class="question-text">${escapeHtml(q.text)}</div>
         ${q.hint ? `<p class="question-hint">${escapeHtml(q.hint)}</p>` : ''}
-        <ul class="options-list">
+        <ul class="options-list${isMulti ? ' options-list--multi' : ''}">
           ${optionsHtml}
           ${otherHtml}
         </ul>

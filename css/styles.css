@@ -513,6 +513,30 @@ footer p {
   background: var(--green);
   box-shadow: inset 0 0 0 3px var(--white);
 }
+/* Square checkboxes for multi-select questions */
+.options-list--multi .option-dot {
+  border-radius: 4px;
+  box-shadow: none;
+}
+.options-list--multi .option-item input:checked + .option-label .option-dot {
+  border-color: var(--green);
+  background: var(--green);
+  box-shadow: none;
+  /* checkmark via pseudo-element */
+  position: relative;
+}
+.options-list--multi .option-item input:checked + .option-label .option-dot::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 0px;
+  width: 5px;
+  height: 9px;
+  border: 2px solid white;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
 
 /* Other free text */
 .other-input {
