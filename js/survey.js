@@ -288,7 +288,7 @@ function renderResults(tmpl, name, company, scores, confidence) {
         <h3>Go deeper with a 1-day on-site OrgDesignScan</h3>
         <p>${escapeHtml(tmpl.onsiteValue)}</p>
         <div class="results-cta-buttons">
-          <a href="https://10xorg.com" target="_blank" class="btn btn-teal">
+          <a href="https://calendly.com/roland-flemm/30min?back=1" target="_blank" rel="noopener" class="btn btn-teal">
             Book a 1-day on-site scan
           </a>
           <button class="btn btn-outline" id="btn-send-pdf"
