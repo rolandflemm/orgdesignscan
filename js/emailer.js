@@ -280,7 +280,7 @@ function sendReportToUser(tmpl, firstname, lastname, email, company) {
             Book a free appointment →
           </a>
           <p style="color:rgba(255,255,255,0.5);font-size:12px;margin:16px 0 0;">
-            Powered by Org Topologies™
+            Powered by <a href="https://www.orgtopologies.com" style="color:rgba(255,255,255,0.6);">Org Topologies™</a>
           </p>
         </div>
 
