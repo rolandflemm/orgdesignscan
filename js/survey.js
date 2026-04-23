@@ -289,7 +289,7 @@ function renderResults(tmpl, name, company, scores, confidence) {
         <p>${escapeHtml(tmpl.onsiteValue)}</p>
         <div class="results-cta-buttons">
           <button class="btn btn-teal" onclick="openSurveyOnsiteModal()">
-            Contact me for an on-site AI-readiness Scan
+            Contact us for an on-site AI-readiness Scan
           </button>
           <button class="btn btn-outline" id="btn-send-pdf"
             style="color:white; border-color:rgba(255,255,255,0.5);"
