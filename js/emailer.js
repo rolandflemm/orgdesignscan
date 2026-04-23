@@ -188,6 +188,50 @@ function sendSurveyEmail(tmpl, firstname, lastname, email, company, answers) {
   }).catch(() => {});
 }
 
+/* ── Onsite scan request ─────────────────────────────────────
+   Triggered from about.html contact form. Includes phone.     */
+function sendOnsiteEmail(firstname, lastname, email, phone, company) {
+  if (!_emailjsReady()) return;
+  const cfg = window.ODS_CONFIG.emailjs;
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:600px;color:#111827;">
+      <div style="background:#4338CA;padding:20px 28px;border-radius:8px 8px 0 0;">
+        <h2 style="color:white;margin:0;font-size:18px;">On-site AI-readiness Scan Request</h2>
+      </div>
+      <div style="padding:24px 28px;background:#F8FAFF;border:1px solid #E0E7FF;border-top:0;border-radius:0 0 8px 8px;">
+        <table style="border-collapse:collapse;width:100%;">
+          <tr>
+            <td style="padding:10px 12px;border-bottom:1px solid #E0E7FF;font-weight:bold;width:110px;font-size:14px;">Name</td>
+            <td style="padding:10px 12px;border-bottom:1px solid #E0E7FF;font-size:14px;">${firstname} ${lastname}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 12px;border-bottom:1px solid #E0E7FF;font-weight:bold;font-size:14px;">Email</td>
+            <td style="padding:10px 12px;border-bottom:1px solid #E0E7FF;font-size:14px;">
+              <a href="mailto:${email}" style="color:#4338CA;">${email}</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:10px 12px;border-bottom:1px solid #E0E7FF;font-weight:bold;font-size:14px;">Phone</td>
+            <td style="padding:10px 12px;border-bottom:1px solid #E0E7FF;font-size:14px;">${phone || '—'}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 12px;font-weight:bold;font-size:14px;">Company</td>
+            <td style="padding:10px 12px;font-size:14px;">${company || '—'}</td>
+          </tr>
+        </table>
+      </div>
+    </div>`;
+
+  emailjs.send(cfg.serviceId, cfg.templateId, {
+    to_email:     'roland@orgtopologies.com',
+    subject:      'orgscan - request for on-site AI-readiness Scan',
+    message_html: html,
+    from_name:    `${firstname} ${lastname}`,
+    reply_to:     email,
+  }).catch(() => {});
+}
+
 /* ── Report email to user ────────────────────────────────────
    Triggered when user clicks "Send me the PDF".
    Returns a Promise so the button can show success/failure.   */

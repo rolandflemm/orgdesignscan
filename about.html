@@ -148,7 +148,7 @@
 
       <div style="margin-top:48px;">
         <button class="btn btn-primary btn-lg" onclick="openOnsiteModal()">
-          Make an appointment to schedule an on-site AI-readiness Scan →
+          Contact me to schedule an on-site AI-readiness Scan →
         </button>
       </div>
     </div>
@@ -158,34 +158,50 @@
   <div class="modal-overlay" id="onsite-modal">
     <div class="modal">
       <button class="modal-close" onclick="closeOnsiteModal()" aria-label="Close">&times;</button>
-      <h2>Schedule an on-site AI-readiness Scan</h2>
-      <p class="modal-sub">Enter your details and we'll be in touch to plan your on-site scan.</p>
-      <form id="onsiteForm" onsubmit="submitOnsiteForm(event)">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-          <div class="form-group" style="margin-bottom:0;">
-            <label for="onsiteFirstName">First name</label>
-            <input type="text" id="onsiteFirstName" placeholder="Sarah" required autocomplete="given-name" />
+
+      <!-- Form view -->
+      <div id="onsite-form-view">
+        <h2>Schedule an on-site AI-readiness Scan</h2>
+        <p class="modal-sub">Leave your details and we will contact you to plan your on-site scan.</p>
+        <form id="onsiteForm" onsubmit="submitOnsiteForm(event)">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label for="onsiteFirstName">First name</label>
+              <input type="text" id="onsiteFirstName" placeholder="Sarah" required autocomplete="given-name" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label for="onsiteLastName">Last name</label>
+              <input type="text" id="onsiteLastName" placeholder="Jones" required autocomplete="family-name" />
+            </div>
           </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label for="onsiteLastName">Last name</label>
-            <input type="text" id="onsiteLastName" placeholder="Jones" required autocomplete="family-name" />
+          <div class="form-group" style="margin-top:12px;">
+            <label for="onsiteEmail">Work email</label>
+            <input type="email" id="onsiteEmail" placeholder="you@company.com" required autocomplete="email" />
           </div>
-        </div>
-        <div class="form-group" style="margin-top:12px;">
-          <label for="onsiteEmail">Work email</label>
-          <input type="email" id="onsiteEmail" placeholder="you@company.com" required autocomplete="email" />
-        </div>
-        <div class="form-group">
-          <label for="onsiteCompany">Company name</label>
-          <input type="text" id="onsiteCompany" placeholder="Acme Corp" required autocomplete="organization" />
-        </div>
-        <button type="submit" id="onsite-submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;">
-          Request appointment →
-        </button>
-      </form>
-      <p style="font-size:0.78rem; color:var(--text-muted); margin-top:16px; text-align:center;">
-        We respect your privacy. Your data is only used to follow up on your request.
-      </p>
+          <div class="form-group">
+            <label for="onsitePhone">Phone number</label>
+            <input type="tel" id="onsitePhone" placeholder="+1 555 000 0000" autocomplete="tel" />
+          </div>
+          <div class="form-group">
+            <label for="onsiteCompany">Company name</label>
+            <input type="text" id="onsiteCompany" placeholder="Acme Corp" required autocomplete="organization" />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;">
+            Send request →
+          </button>
+        </form>
+        <p style="font-size:0.78rem; color:var(--text-muted); margin-top:16px; text-align:center;">
+          We respect your privacy. Your data is only used to follow up on your request.
+        </p>
+      </div>
+
+      <!-- Thank-you view -->
+      <div id="onsite-thankyou-view" style="display:none; text-align:center; padding:16px 0;">
+        <div style="font-size:2.5rem; margin-bottom:16px;">✓</div>
+        <h2 style="margin-bottom:12px;">Thank you!</h2>
+        <p style="color:var(--text-muted);">We will contact you soon to plan your on-site AI-readiness Scan.</p>
+      </div>
+
     </div>
   </div>
 
@@ -201,6 +217,9 @@
     }
     function closeOnsiteModal() {
       document.getElementById('onsite-modal').classList.remove('open');
+      document.getElementById('onsite-form-view').style.display = 'block';
+      document.getElementById('onsite-thankyou-view').style.display = 'none';
+      document.getElementById('onsiteForm').reset();
     }
     document.getElementById('onsite-modal').addEventListener('click', function(e) {
       if (e.target === this) closeOnsiteModal();
@@ -213,13 +232,11 @@
       const first   = document.getElementById('onsiteFirstName').value.trim();
       const last    = document.getElementById('onsiteLastName').value.trim();
       const email   = document.getElementById('onsiteEmail').value.trim();
+      const phone   = document.getElementById('onsitePhone').value.trim();
       const company = document.getElementById('onsiteCompany').value.trim();
-      const btn     = document.getElementById('onsite-submit');
-      btn.disabled = true;
-      btn.textContent = 'Sending…';
-      sendContactEmail(first, last, email, company, 'orgscan - request for on-site AI-readiness Scan');
-      window.open('https://calendly.com/roland-flemm/30min?back=1', '_blank');
-      closeOnsiteModal();
+      sendOnsiteEmail(first, last, email, phone, company);
+      document.getElementById('onsite-form-view').style.display = 'none';
+      document.getElementById('onsite-thankyou-view').style.display = 'block';
     }
   </script>
 
