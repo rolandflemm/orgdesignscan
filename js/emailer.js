@@ -272,15 +272,25 @@ function sendReportToUser(tmpl, firstname, lastname, email, company) {
 
         <!-- CTA -->
         <div style="background:#4338CA;border-radius:8px;padding:24px 28px;">
-          <h2 style="color:white;font-size:16px;margin:0 0 8px;">Next step: 1-day On-site OrgDesignScan</h2>
-          <p style="color:rgba(255,255,255,0.85);font-size:13px;margin:0 0 20px;line-height:1.6;">${_e(tmpl.onsiteValue)}</p>
+          <h2 style="color:white;font-size:16px;margin:0 0 10px;">Your next step: a free call</h2>
+          <p style="color:rgba(255,255,255,0.9);font-size:13px;margin:0 0 10px;line-height:1.7;">
+            This QuickScan gives you a directional diagnosis — but every organization is different, and the scan will
+            have raised questions worth exploring. Book a free call to discuss your results with
+            <strong style="color:white;">Roland Flemm</strong>, an organizational design expert and
+            co-author of the best-selling book
+            <a href="https://10xorg.com" style="color:#93C5FD;font-style:italic;">10X ORG</a>.
+          </p>
+          <p style="color:rgba(255,255,255,0.75);font-size:13px;margin:0 0 20px;line-height:1.6;">
+            No pitch. No obligation. Just a conversation about what the results mean for your organization
+            and where to go next.
+          </p>
           <a href="https://calendly.com/roland-flemm/30min?back=1"
             style="display:inline-block;background:white;color:#4338CA;font-weight:700;font-size:14px;
                    padding:12px 24px;border-radius:6px;text-decoration:none;">
             Book a free appointment →
           </a>
-          <p style="color:rgba(255,255,255,0.5);font-size:12px;margin:16px 0 0;">
-            Powered by <a href="https://www.orgtopologies.com" style="color:rgba(255,255,255,0.6);">Org Topologies™</a>
+          <p style="color:rgba(255,255,255,0.4);font-size:12px;margin:16px 0 0;">
+            Powered by <a href="https://www.orgtopologies.com" style="color:rgba(255,255,255,0.5);">Org Topologies™</a>
           </p>
         </div>
 
