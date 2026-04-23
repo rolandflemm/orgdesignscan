@@ -172,7 +172,7 @@ function submitSurvey() {
   // Small delay so the spinner is visible
   setTimeout(() => {
     const { topology, scores, confidence } = scoreAnswers(answers);
-    const tmpl = TEMPLATES[topology];
+    const tmpl = getContextualTemplate(topology, answers);
     const name     = sessionStorage.getItem('ods_name')     || '';
     const lastname = sessionStorage.getItem('ods_lastname') || '';
     const email    = sessionStorage.getItem('ods_email')    || '';

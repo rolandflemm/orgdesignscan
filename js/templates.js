@@ -159,3 +159,93 @@ const TEMPLATES = {
   },
 
 };
+
+// ─────────────────────────────────────────────────────────────
+// Contextual variant: Resource Topology — Fit for Purpose
+// Applied when topology = Resource AND market is stable AND
+// org optimizes for cost/efficiency/reliability/delivery.
+// ─────────────────────────────────────────────────────────────
+const TEMPLATE_RESOURCE_FIT = {
+  topology:       'Resource Topology',
+  tagline:        'Efficiency and predictability — appropriate for your market',
+  score:          6,
+  scoreLabel:     'Fit for Purpose',
+  optimizesFor:   'Utilization & Predictability',
+  bestFor:        'Stable, process-driven environments',
+  tradeOff:       'Will need structural evolution if the market shifts',
+
+  summary: `Your organization is built around deep specialization in a stable, predictable market — and that alignment is a genuine strength. Not every organization needs to be Adaptive. In your context, the coordination overhead and narrow mandates are the deliberate price of the reliability and cost control your market rewards. The real opportunity is not to restructure — it is to use AI to sharpen what already works: reduce the cost of specialist work, automate the routine within functions, and if headcount optimization is a strategic goal, do it with data and structure rather than through blunt cuts.`,
+
+  patterns: [
+    {
+      name:     'Functional specialization — a deliberate trade-off',
+      severity: 'Medium',
+      detail:   'In a stable market, specialization is a rational design choice. AI tools deployed per function can create real local value. The goal is not full structural integration — it is making sure those tools connect at the handoff points that matter most.',
+    },
+    {
+      name:     'Coordination overhead',
+      severity: 'Medium',
+      detail:   'Coordination cost is the price of your reliability model. AI can significantly reduce it — automated handoffs, intelligent project tracking, and predictive capacity planning can cut coordinator workload without requiring a reorganisation.',
+    },
+    {
+      name:     'Knowledge concentration',
+      severity: 'Medium',
+      detail:   'Even in a fit-for-purpose structure, key-person dependency is a fragility. As you automate, use AI to document and codify expert knowledge before roles change — this reduces long-term specialist risk and lowers onboarding cost.',
+    },
+    {
+      name:     'Limited adaptability if market shifts',
+      severity: 'Low',
+      detail:   'In a stable market, slower response to change is an acceptable trade-off. If your market conditions change materially, this will need revisiting — but it is not a current priority.',
+    },
+  ],
+
+  aiCeiling: `In a Resource Topology operating in a stable market, AI has clear and practical value: automating repetitive tasks within specialist roles, reducing coordination friction, and enabling intelligent capacity and workforce planning. If reducing people costs is part of your strategy, AI can help you model where to reduce, which roles can be partially or fully automated, and how to sequence changes without disrupting the reliability that makes your organisation work. <strong>Your structure is appropriate for your context. The question is where AI creates the most leverage within it — and how to sequence that deliberately.</strong>`,
+
+  strengths: [
+    'Deep domain expertise that AI can amplify directly within existing roles',
+    'Stable, well-understood processes that are easier to automate than volatile ones',
+    'Clear accountability within functions makes measuring AI ROI straightforward',
+    'Predictable demand patterns make capacity modelling and workforce planning tractable',
+  ],
+
+  recommendations: [
+    'Identify the 2–3 specialist functions with the highest volume of repetitive work. These are your best candidates for AI-assisted automation — reducing cost per output without disrupting critical expertise.',
+    'If workforce cost reduction is a strategic goal, use AI to build a capacity model first: map workload, role utilisation, and demand patterns before making structural decisions. AI-driven workforce planning turns this from guesswork into a structured, defensible process.',
+    'Use AI to reduce coordination overhead within your existing structure — automated status reporting, dependency tracking, and intelligent scheduling can cut the coordination tax without requiring reorganisation.',
+    'Protect your knowledge concentration risk even as you automate: use AI to document and codify expert knowledge before roles change. This reduces fragility and lowers the cost of future transitions.',
+  ],
+
+  onsiteValue: `A 1-day OrgDesignScan will identify exactly where AI creates the most leverage in your current structure — mapping the specialist functions where automation has the highest ROI, building the case for strategic workforce optimisation, and sequencing the changes so reliability is never at risk.`,
+};
+
+// ─────────────────────────────────────────────────────────────
+// getContextualTemplate(topology, answers)
+// Returns the base template, or a context-adjusted variant
+// when the organisation is structurally fit for its environment.
+// ─────────────────────────────────────────────────────────────
+function getContextualTemplate(topology, answers) {
+  const base = TEMPLATES[topology];
+  if (!base) return base;
+
+  if (topology === 'Resource') {
+    const market       = answers.market_condition      || '';
+    const optimization = answers.current_optimization  || '';
+    const future       = answers.desired_future        || '';
+
+    const isStableMarket = market.startsWith('Stable');
+    const isEfficiencyFocused =
+      optimization.startsWith('Cost') ||
+      optimization.startsWith('Operational') ||
+      optimization.startsWith('Predictable');
+    const wantsCostOrEfficiency =
+      future.startsWith('Less coordination') ||
+      future.startsWith('Better use of specialist') ||
+      future.startsWith('Faster delivery');
+
+    if (isStableMarket && (isEfficiencyFocused || wantsCostOrEfficiency)) {
+      return TEMPLATE_RESOURCE_FIT;
+    }
+  }
+
+  return base;
+}
