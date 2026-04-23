@@ -219,6 +219,119 @@ const TEMPLATE_RESOURCE_FIT = {
 };
 
 // ─────────────────────────────────────────────────────────────
+// Contextual variant: Delivery Topology — Fit for Purpose
+// Applied when topology = Delivery AND market is stable/shifting
+// AND org optimizes for delivery speed or customer outcomes.
+// ─────────────────────────────────────────────────────────────
+const TEMPLATE_DELIVERY_FIT = {
+  topology:       'Delivery Topology',
+  tagline:        'Fast, predictable flow — well-matched to your market',
+  score:          7,
+  scoreLabel:     'Fit for Purpose',
+  optimizesFor:   'Speed & Flow within boundaries',
+  bestFor:        'Known work in manageable markets',
+  tradeOff:       'Cross-cutting AI opportunities still need coordination',
+
+  summary: `Your organisation has built something valuable: cross-functional teams that can move at pace within their defined scope, in a market where that pace and predictability matter. That is not a problem to solve — it is a foundation to build on. In your context, the coordination overhead at team boundaries is a real but manageable cost, and AI can address it directly. The opportunity is to extend what your teams already do well: deliver faster, improve cross-team visibility, and gradually expand the outcomes teams are accountable for — without triggering a full reorganisation.`,
+
+  patterns: [
+    {
+      name:     'Teams optimised for their lane',
+      severity: 'Medium',
+      detail:   'In a manageable market, lane-based delivery is appropriate. AI can accelerate within lanes and reduce the friction at boundaries — the goal is not to eliminate lanes but to make crossing them cheaper.',
+    },
+    {
+      name:     'Strategic shifts may trigger structural friction',
+      severity: 'Medium',
+      detail:   'For now this is manageable. As AI creates new cross-team opportunities, plan ahead for how to handle them without full restructuring — a lightweight cross-team coordination mechanism built today prevents a crisis later.',
+    },
+    {
+      name:     'Outcome ownership stops at team boundaries',
+      severity: 'Medium',
+      detail:   'A real gap, but addressable through gradual mandate expansion rather than wholesale redesign. Start by tying one shared business metric to a group of teams and building accountability around it.',
+    },
+    {
+      name:     'Coordination overhead at scale',
+      severity: 'Low',
+      detail:   'Manageable in your current context. AI-assisted coordination tools — automated dependency tracking, shared dashboards, intelligent scheduling — can reduce this further without structural change.',
+    },
+  ],
+
+  aiCeiling: `In a Delivery Topology with a manageable market, AI works well within team boundaries — real-time data integration, smarter prioritisation, recommendation engines, better feedback loops. The incremental next step is using AI to bridge team boundaries: shared visibility, AI-assisted dependency management, cross-team outcome tracking. <strong>Your structure is right for your context. The move now is extending AI from within teams to across them — without needing to redesign everything first.</strong>`,
+
+  strengths: [
+    'Cross-functional teams can act without functional handoffs within their scope',
+    'Established delivery rhythm that AI can directly accelerate and improve',
+    'Teams already oriented to outcomes — the mandate just needs to expand at the edges',
+    'Manageable market conditions reduce the urgency to restructure before getting started',
+  ],
+
+  recommendations: [
+    'Start your AI pilots at the team level — where scope is clear and impact is measurable. Tie each team\'s AI investment to a customer outcome metric, not just internal productivity.',
+    'Use AI to improve cross-team visibility and reduce coordination friction: automated dependency tracking, shared real-time dashboards, and AI-assisted planning across related teams are practical next steps that require no restructuring.',
+    'Identify one shared business outcome that 2–3 teams contribute to and run a cross-team AI pilot around it. This builds the cross-boundary capability you will need as AI opportunities grow — without disrupting current delivery.',
+    'Plan ahead: as AI surfaces opportunities that cut across team lanes, you will need a mechanism to handle them. Design that lightweight coordination layer now, before it becomes a pressure.',
+  ],
+
+  onsiteValue: `A 1-day OrgDesignScan will map exactly which team boundaries are creating unnecessary friction, identify the highest-value cross-team AI opportunities, and give you a concrete path to extending your delivery capability — without reorganising what is already working.`,
+};
+
+// ─────────────────────────────────────────────────────────────
+// Contextual variant: Adaptive Topology — Optimal Readiness
+// Applied when topology = Adaptive AND market is volatile/shifting
+// AND org optimizes for innovation or customer outcomes.
+// ─────────────────────────────────────────────────────────────
+const TEMPLATE_ADAPTIVE_FIT = {
+  topology:       'Adaptive Topology',
+  tagline:        'Built for volatility, acceleration, and compounding AI value',
+  score:          9,
+  scoreLabel:     'Optimal Readiness',
+  optimizesFor:   'Adaptability & Learning',
+  bestFor:        'Volatile, innovation-driven contexts',
+  tradeOff:       'Advantage only compounds if the AI learning loop is actively maintained',
+
+  summary: `Your organisation is genuinely well-positioned — structurally aligned with a volatile, fast-moving market and oriented toward the innovation and autonomy that AI rewards most. This is not a common combination. Most organisations arrive at AI adoption with structural debt to work through first; yours does not. The opportunity now is to move fast and compound: choose your AI north star, build the learning infrastructure to scale what works, and get ahead of competitors who are still spending energy trying to restructure before they can even start.`,
+
+  patterns: [
+    {
+      name:     'Learning investment required',
+      severity: 'Medium',
+      detail:   'Adaptive organisations compound AI value through multi-learning. Invest deliberately in this — structured learning loops, shared practice, and time to experiment — or the structural advantage will be underutilised.',
+    },
+    {
+      name:     'Risk of uncoordinated AI adoption',
+      severity: 'Low',
+      detail:   'Your structure can coordinate without heavy overhead — but only if you establish a shared AI direction. Without it, teams will optimise locally and miss the systemic compounding gains your topology makes possible.',
+    },
+    {
+      name:     'Control structure tension',
+      severity: 'Low',
+      detail:   'Already manageable in your context. Keep actively supporting the leadership shift as AI moves authority closer to the work — this is where Adaptive organisations either accelerate or quietly reinstall the old hierarchy.',
+    },
+  ],
+
+  aiCeiling: `In an Adaptive Topology aligned with a volatile market, there is no structural ceiling — only an execution one. AI can compound across the whole system: adaptive learning tools, real-time customer analytics, AI-assisted prioritisation across shared backlogs, end-to-end process optimisation. Teams can expand into new domains faster with AI as a learning accelerator. <strong>The only limit now is the speed at which you build the AI learning loop and the clarity of your north star. Both are within your control.</strong>`,
+
+  strengths: [
+    'Broad mandates allow AI deployment across the full value chain — not just isolated functions',
+    'Shared ownership means AI insights reach decision-makers without losing fidelity',
+    'Your structure can absorb AI-driven strategic shifts without reorganisation',
+    'Low coordination overhead means AI pilots can start fast and scale faster',
+    'Structural alignment with a volatile market means your advantage compounds over time',
+  ],
+
+  recommendations: [
+    'Define your AI north star at the outcome level — what specific customer or business result should AI measurably improve within 6 months? Anchor every initiative to that, not to tool adoption metrics.',
+    'Move fast: your structural advantage is real, but it erodes if competitors catch up structurally while you delay. Pick your highest-leverage AI opportunity and start now — not after the next planning cycle.',
+    'Build the AI learning loop as a formal practice: regular cross-team exchanges on what is working, what is not, and what the organisation should adjust. This is how your advantage compounds rather than plateaus.',
+    'Use AI as a multi-learning accelerator — help teams expand into new domains faster, not just automate existing tasks. In a volatile market, this is your structural edge over slower competitors.',
+    'Actively govern the AI portfolio at the outcome level: ensure investments are distributed across the value chain, not clustering in one team while others wait.',
+  ],
+
+  onsiteValue: `A 1-day OrgDesignScan will translate your structural and market advantage into a concrete AI roadmap — identifying the highest-compounding opportunities, sequencing them for maximum speed, and designing the learning infrastructure that will sustain and grow the advantage over time.`,
+};
+
+// ─────────────────────────────────────────────────────────────
 // getContextualTemplate(topology, answers)
 // Returns the base template, or a context-adjusted variant
 // when the organisation is structurally fit for its environment.
@@ -227,11 +340,12 @@ function getContextualTemplate(topology, answers) {
   const base = TEMPLATES[topology];
   if (!base) return base;
 
-  if (topology === 'Resource') {
-    const market       = answers.market_condition      || '';
-    const optimization = answers.current_optimization  || '';
-    const future       = answers.desired_future        || '';
+  const market       = answers.market_condition     || '';
+  const optimization = answers.current_optimization || '';
+  const future       = answers.desired_future       || '';
 
+  // ── Resource: fit for purpose in stable, efficiency-driven context ──
+  if (topology === 'Resource') {
     const isStableMarket = market.startsWith('Stable');
     const isEfficiencyFocused =
       optimization.startsWith('Cost') ||
@@ -244,6 +358,34 @@ function getContextualTemplate(topology, answers) {
 
     if (isStableMarket && (isEfficiencyFocused || wantsCostOrEfficiency)) {
       return TEMPLATE_RESOURCE_FIT;
+    }
+  }
+
+  // ── Delivery: fit for purpose in manageable market with delivery/customer focus ──
+  if (topology === 'Delivery') {
+    const isManageableMarket = market.startsWith('Stable') || market.startsWith('Shifting');
+    const isAligned =
+      optimization.startsWith('Predictable') ||
+      optimization.startsWith('Customer') ||
+      future.startsWith('Faster delivery') ||
+      future.startsWith('Teams that are more autonomous');
+
+    if (isManageableMarket && isAligned) {
+      return TEMPLATE_DELIVERY_FIT;
+    }
+  }
+
+  // ── Adaptive: optimal readiness when market volatility and goals align ──
+  if (topology === 'Adaptive') {
+    const isVolatileMarket = market.startsWith('Shifting') || market.startsWith('Unpredictable');
+    const isAligned =
+      optimization.startsWith('Speed of innovation') ||
+      optimization.startsWith('Customer') ||
+      future.startsWith('More innovation') ||
+      future.startsWith('Teams that are more autonomous');
+
+    if (isVolatileMarket && isAligned) {
+      return TEMPLATE_ADAPTIVE_FIT;
     }
   }
 
