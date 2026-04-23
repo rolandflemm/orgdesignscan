@@ -300,6 +300,11 @@ function renderResults(tmpl, name, company, scores, confidence) {
         </div>
       </div>
 
+      <!-- Disclaimer -->
+      <p style="margin-top:32px; font-size:0.75rem; color:var(--text-muted); line-height:1.6; text-align:center;">
+        This report was generated automatically based on your survey responses. No rights can be derived from its contents without prior consultation with one of our experts.
+      </p>
+
     </div>
   `;
 
