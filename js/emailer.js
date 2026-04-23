@@ -11,8 +11,9 @@ function initEmailJS() {
 
 /* ── Contact form submission ─────────────────────────────────
    Triggered when visitor fills in the landing page modal.     */
-function sendContactEmail(firstname, lastname, email, company) {
+function sendContactEmail(firstname, lastname, email, company, subject) {
   if (!_emailjsReady()) return;
+  subject = subject || 'orgscan - coldcontact form submission';
   const cfg = window.ODS_CONFIG.emailjs;
 
   const html = `
@@ -42,7 +43,7 @@ function sendContactEmail(firstname, lastname, email, company) {
 
   emailjs.send(cfg.serviceId, cfg.templateId, {
     to_email:     'roland@orgtopologies.com',
-    subject:      'orgscan - coldcontact form submission',
+    subject:      subject,
     message_html: html,
     from_name:    `${firstname} ${lastname}`,
     reply_to:     email,
