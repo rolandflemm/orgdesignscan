@@ -91,6 +91,112 @@ const SCORE_MAP = {
 
 };
 
+// ── Free-text "Other" answer interpretation ──────────────────
+// Keyword groups for each scored question.
+// First matching group wins; if no group matches, no points are awarded.
+
+const OTHER_KEYWORDS = {
+
+  main_delay: [
+    {
+      // Approval chains, hierarchy, management bottlenecks
+      words: ['approval', 'sign-off', 'sign off', 'bureaucra', 'hierarch',
+              'escalat', 'committee', 'permission', 'authoriz', 'authoris',
+              'management decision', 'leadership decision'],
+      scores: { Resource: 3, Delivery: 1, Adaptive: 0 },
+    },
+    {
+      // Resourcing and capacity constraints
+      words: ['lack of skill', 'no skill', 'capacity', 'headcount',
+              'staffing', 'not enough people', 'resource constrain'],
+      scores: { Resource: 2, Delivery: 1, Adaptive: 0 },
+    },
+    {
+      // Unclear scope, shifting priorities
+      words: ['scope', 'changing requirement', 'unclear priorit',
+              'shifting priorit', 'misalign', 'no clear goal', 'unclear goal'],
+      scores: { Resource: 1, Delivery: 2, Adaptive: 0 },
+    },
+    {
+      // External / market-driven change
+      words: ['market change', 'customer feedback', 'pivot',
+              'external change', 'fast-changing', 'rapidly changing'],
+      scores: { Resource: 0, Delivery: 1, Adaptive: 2 },
+    },
+  ],
+
+  current_optimization: [
+    {
+      // Compliance, risk, regulation
+      words: ['complian', 'regulat', 'audit', 'risk management',
+              'safety', 'governance', 'legal', 'control'],
+      scores: { Resource: 3, Delivery: 1, Adaptive: 0 },
+    },
+    {
+      // Quality and customer focus
+      words: ['quality', 'customer satisf', 'nps', 'net promoter',
+              'user satisf', 'client satisf'],
+      scores: { Resource: 0, Delivery: 2, Adaptive: 1 },
+    },
+    {
+      // Growth, revenue, innovation
+      words: ['growth', 'revenue', 'market share', 'profit',
+              'innovat', 'experiment', 'learn', 'digital transform'],
+      scores: { Resource: 0, Delivery: 0, Adaptive: 3 },
+    },
+    {
+      // People, culture, engagement
+      words: ['employee', 'talent', 'retention', 'engagement',
+              'culture', 'morale', 'wellbeing'],
+      scores: { Resource: 1, Delivery: 1, Adaptive: 1 },
+    },
+  ],
+
+  desired_future: [
+    {
+      // Cost, compliance, control
+      words: ['complian', 'governance', 'risk', 'reduce cost',
+              'cost reduct', 'cut cost', 'efficiency', 'leaner'],
+      scores: { Resource: 2, Delivery: 1, Adaptive: 0 },
+    },
+    {
+      // Collaboration, alignment, breaking silos
+      words: ['collaborat', 'communicat', 'alignment', 'aligned',
+              'cross-team', 'cross team', 'silo', 'break down'],
+      scores: { Resource: 0, Delivery: 2, Adaptive: 1 },
+    },
+    {
+      // Growth, scaling, transformation
+      words: ['grow', 'scale', 'expand', 'internation', 'revenue',
+              'profit', 'digital', 'transform', 'data-driven'],
+      scores: { Resource: 0, Delivery: 1, Adaptive: 2 },
+    },
+    {
+      // Innovation, agility, learning
+      words: ['innovat', 'experiment', 'agil', 'learn', 'adapt',
+              'faster decision', 'empow'],
+      scores: { Resource: 0, Delivery: 0, Adaptive: 3 },
+    },
+  ],
+
+};
+
+/**
+ * Interpret a free-text "Other" answer using keyword matching.
+ * Returns a scores object, or null if no keywords matched.
+ */
+function interpretOther(qId, text) {
+  const groups = OTHER_KEYWORDS[qId];
+  if (!groups || !text) return null;
+  const lower = text.toLowerCase();
+  for (const group of groups) {
+    if (group.words.some(w => lower.includes(w))) {
+      return group.scores;
+    }
+  }
+  return null; // Unrecognised — skip rather than guess
+}
+
 /**
  * Score survey answers and return the matched topology.
  * @param {Object} answers - { questionId: answerText }
@@ -104,15 +210,23 @@ function scoreAnswers(answers) {
     if (!answer) continue;
 
     // Match exact answer or check if answer starts with a known option
-    // (handles "Other: ..." free-text answers gracefully)
     const match = Object.keys(scoreTable).find(opt =>
       answer === opt || answer.toLowerCase().startsWith(opt.toLowerCase().slice(0, 20))
     );
+
     if (match) {
       const pts = scoreTable[match];
       scores.Resource  += pts.Resource;
       scores.Delivery  += pts.Delivery;
       scores.Adaptive  += pts.Adaptive;
+    } else {
+      // Free-text "Other" answer — try keyword interpretation
+      const interp = interpretOther(qId, answer);
+      if (interp) {
+        scores.Resource  += interp.Resource;
+        scores.Delivery  += interp.Delivery;
+        scores.Adaptive  += interp.Adaptive;
+      }
     }
   }
 

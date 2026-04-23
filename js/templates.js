@@ -61,8 +61,8 @@ const TEMPLATES = {
   Delivery: {
     topology:       'Delivery Topology',
     tagline:        'Performance through fast, predictable flow',
-    score:          5,
-    scoreLabel:     'Moderate Readiness',
+    score:          4,
+    scoreLabel:     'Developing Readiness',
     optimizesFor:   'Speed & Flow within boundaries',
     bestFor:        'Known work that fits team structure',
     tradeOff:       'Cross-cutting work still needs coordination',
@@ -113,7 +113,7 @@ const TEMPLATES = {
   Adaptive: {
     topology:       'Adaptive Topology',
     tagline:        'Performance through flexibility, innovation, and resilience',
-    score:          8,
+    score:          7,
     scoreLabel:     'Strong Readiness',
     optimizesFor:   'Adaptability & Learning',
     bestFor:        'Volatile, innovation-driven contexts',
@@ -168,7 +168,7 @@ const TEMPLATES = {
 const TEMPLATE_RESOURCE_FIT = {
   topology:       'Resource Topology',
   tagline:        'Efficiency and predictability — appropriate for your market',
-  score:          6,
+  score:          5,
   scoreLabel:     'Fit for Purpose',
   optimizesFor:   'Utilization & Predictability',
   bestFor:        'Stable, process-driven environments',
@@ -226,7 +226,7 @@ const TEMPLATE_RESOURCE_FIT = {
 const TEMPLATE_DELIVERY_FIT = {
   topology:       'Delivery Topology',
   tagline:        'Fast, predictable flow — well-matched to your market',
-  score:          7,
+  score:          6,
   scoreLabel:     'Fit for Purpose',
   optimizesFor:   'Speed & Flow within boundaries',
   bestFor:        'Known work in manageable markets',
@@ -284,8 +284,8 @@ const TEMPLATE_DELIVERY_FIT = {
 const TEMPLATE_ADAPTIVE_FIT = {
   topology:       'Adaptive Topology',
   tagline:        'Built for volatility, acceleration, and compounding AI value',
-  score:          9,
-  scoreLabel:     'Optimal Readiness',
+  score:          8,
+  scoreLabel:     'High Readiness',
   optimizesFor:   'Adaptability & Learning',
   bestFor:        'Volatile, innovation-driven contexts',
   tradeOff:       'Advantage only compounds if the AI learning loop is actively maintained',
@@ -332,59 +332,74 @@ const TEMPLATE_ADAPTIVE_FIT = {
 };
 
 // ─────────────────────────────────────────────────────────────
-// getContextualTemplate(topology, answers)
-// Returns the base template, or a context-adjusted variant
-// when the organisation is structurally fit for its environment.
+// getContextualTemplate(topology, answers, scores)
+// Returns the base template, or a context-adjusted variant only
+// when the organisation is clearly fit for its environment.
+//
+// Conservative rules:
+//  • Requires a confident topology win (gap ≥ 3 between 1st and 2nd).
+//  • Resource Fit: stable market + efficiency/reliability focus only
+//    (wanting "faster delivery" signals the structure is already a problem).
+//  • Delivery Fit: stable market only (shifting = uncertainty, no upgrade).
+//  • Adaptive Fit: unpredictable market only (shifting = manageable, no upgrade).
 // ─────────────────────────────────────────────────────────────
-function getContextualTemplate(topology, answers) {
+function getContextualTemplate(topology, answers, scores) {
   const base = TEMPLATES[topology];
   if (!base) return base;
+
+  // Require a clear topology win before upgrading
+  if (scores) {
+    const sorted = Object.values(scores).sort((a, b) => b - a);
+    const gap = sorted[0] - sorted[1];
+    if (gap < 3) return base; // Mixed signals — stay conservative
+  }
 
   const market       = answers.market_condition     || '';
   const optimization = answers.current_optimization || '';
   const future       = answers.desired_future       || '';
 
-  // ── Resource: fit for purpose in stable, efficiency-driven context ──
+  // ── Resource: fit for purpose only in truly stable, efficiency-driven orgs ──
   if (topology === 'Resource') {
     const isStableMarket = market.startsWith('Stable');
     const isEfficiencyFocused =
       optimization.startsWith('Cost') ||
       optimization.startsWith('Operational') ||
       optimization.startsWith('Predictable');
-    const wantsCostOrEfficiency =
+    // Note: "Faster delivery with fewer dependencies" is excluded —
+    // it signals the org already sees its structure as a problem.
+    const wantsConsolidation =
       future.startsWith('Less coordination') ||
-      future.startsWith('Better use of specialist') ||
-      future.startsWith('Faster delivery');
+      future.startsWith('Better use of specialist');
 
-    if (isStableMarket && (isEfficiencyFocused || wantsCostOrEfficiency)) {
+    if (isStableMarket && (isEfficiencyFocused || wantsConsolidation)) {
       return TEMPLATE_RESOURCE_FIT;
     }
   }
 
-  // ── Delivery: fit for purpose in manageable market with delivery/customer focus ──
+  // ── Delivery: fit for purpose only in a stable (not merely shifting) market ──
   if (topology === 'Delivery') {
-    const isManageableMarket = market.startsWith('Stable') || market.startsWith('Shifting');
+    const isStableMarket = market.startsWith('Stable'); // Shifting = no upgrade
     const isAligned =
       optimization.startsWith('Predictable') ||
       optimization.startsWith('Customer') ||
       future.startsWith('Faster delivery') ||
       future.startsWith('Teams that are more autonomous');
 
-    if (isManageableMarket && isAligned) {
+    if (isStableMarket && isAligned) {
       return TEMPLATE_DELIVERY_FIT;
     }
   }
 
-  // ── Adaptive: optimal readiness when market volatility and goals align ──
+  // ── Adaptive: high readiness only in a truly unpredictable market ──
   if (topology === 'Adaptive') {
-    const isVolatileMarket = market.startsWith('Shifting') || market.startsWith('Unpredictable');
+    const isUnpredictableMarket = market.startsWith('Unpredictable'); // Shifting = no upgrade
     const isAligned =
       optimization.startsWith('Speed of innovation') ||
       optimization.startsWith('Customer') ||
       future.startsWith('More innovation') ||
       future.startsWith('Teams that are more autonomous');
 
-    if (isVolatileMarket && isAligned) {
+    if (isUnpredictableMarket && isAligned) {
       return TEMPLATE_ADAPTIVE_FIT;
     }
   }
