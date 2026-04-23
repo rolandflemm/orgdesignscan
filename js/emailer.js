@@ -53,7 +53,7 @@ function sendContactEmail(firstname, lastname, email, company, subject) {
 /* ── Survey submission ───────────────────────────────────────
    Triggered after survey is scored. Sends full result +
    submitted answers to roland@orgtopologies.com.             */
-function sendSurveyEmail(tmpl, firstname, lastname, email, company, answers) {
+function sendSurveyEmail(tmpl, firstname, lastname, email, company, answers, insights) {
   if (!_emailjsReady()) return;
   const cfg = window.ODS_CONFIG.emailjs;
 
@@ -170,6 +170,10 @@ function sendSurveyEmail(tmpl, firstname, lastname, email, company, answers) {
           <tbody>${answersRows}</tbody>
         </table>
 
+        ${ insights && insights.consistencyNote ? `<p><strong>Consistency note:</strong> ${insights.consistencyNote.title}</p>` : '' }
+        ${ insights && insights.delayRisk ? `<p><strong>Delay risk:</strong> ${insights.delayRisk.title}</p>` : '' }
+        ${ insights && insights.futureGap ? `<p><strong>Future gap:</strong> ${insights.futureGap.title}</p>` : '' }
+
       </div>
 
       <!-- Footer -->
@@ -235,7 +239,7 @@ function sendOnsiteEmail(firstname, lastname, email, phone, company) {
 /* ── Report email to user ────────────────────────────────────
    Triggered when user clicks "Send me the PDF".
    Returns a Promise so the button can show success/failure.   */
-function sendReportToUser(tmpl, firstname, lastname, email, company) {
+function sendReportToUser(tmpl, firstname, lastname, email, company, insights) {
   if (!_emailjsReady()) return Promise.reject('EmailJS not ready');
   const cfg = window.ODS_CONFIG.emailjs;
 
@@ -340,6 +344,27 @@ function sendReportToUser(tmpl, firstname, lastname, email, company) {
         </div>
 
       </div>
+
+      ${ insights && insights.consistencyNote ? `
+      <div style="margin:20px 28px; background:#FEF3C7; border:1px solid #F59E0B; border-radius:8px; padding:16px 20px;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#92400E; margin-bottom:6px;">⚠ Goal–Structure Tension</div>
+        <strong style="font-size:14px; color:#78350F;">${insights.consistencyNote.title}</strong>
+        <p style="margin:8px 0 0; font-size:13px; line-height:1.6; color:#92400E;">${insights.consistencyNote.detail}</p>
+      </div>` : '' }
+
+      ${ insights && insights.delayRisk ? `
+      <div style="margin:20px 28px; border-left:3px solid #F59E0B; padding:16px 20px; background:#FFFBEB; border-radius:0 8px 8px 0;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#92400E; margin-bottom:8px;">Where AI will specifically hit a wall</div>
+        <strong style="font-size:14px; color:#78350F;">${insights.delayRisk.title}</strong>
+        <p style="margin:8px 0 0; font-size:13px; line-height:1.6; color:#374151;">${insights.delayRisk.detail}</p>
+      </div>` : '' }
+
+      ${ insights && insights.futureGap ? `
+      <div style="margin:20px 28px; border-left:3px solid #4338CA; padding:16px 20px; background:#EEF2FF; border-radius:0 8px 8px 0;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#312E81; margin-bottom:8px;">Your goal — what AI will and won't give you</div>
+        <strong style="font-size:14px; color:#312E81;">${insights.futureGap.title}</strong>
+        <p style="margin:8px 0 0; font-size:13px; line-height:1.6; color:#374151;">${insights.futureGap.detail}</p>
+      </div>` : '' }
 
       <div style="padding:12px 28px 0;font-size:11px;color:#9CA3AF;text-align:center;line-height:1.6;">
         This report was generated automatically based on survey responses. No rights can be derived from its contents without prior consultation with one of our experts.

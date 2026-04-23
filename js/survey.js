@@ -173,19 +173,21 @@ function submitSurvey() {
   setTimeout(() => {
     const { topology, scores, confidence } = scoreAnswers(answers);
     const tmpl = getContextualTemplate(topology, answers, scores);
+    const insights = generateInsights(topology, answers);
     const name     = sessionStorage.getItem('ods_name')     || '';
     const lastname = sessionStorage.getItem('ods_lastname') || '';
     const email    = sessionStorage.getItem('ods_email')    || '';
     const company  = sessionStorage.getItem('ods_company')  || '';
-    renderResults(tmpl, name, company, scores, confidence);
-    sendSurveyEmail(tmpl, name, lastname, email, company, answers);
+    renderResults(tmpl, name, company, scores, confidence, insights);
+    sendSurveyEmail(tmpl, name, lastname, email, company, answers, insights);
   }, 1200);
 }
 
 // ── Render Results ───────────────────────────────────────────
-function renderResults(tmpl, name, company, scores, confidence) {
+function renderResults(tmpl, name, company, scores, confidence, insights) {
   // Store for PDF
-  window._result = { tmpl, name, company, scores };
+  window._result = { tmpl, name, company, scores, insights };
+  const ins = insights || {};
 
   const scoreColor = tmpl.score >= 7 ? 'var(--green)' : tmpl.score >= 4 ? '#D97706' : '#DC2626';
 
@@ -257,6 +259,15 @@ function renderResults(tmpl, name, company, scores, confidence) {
         <p style="max-width:620px; margin:0 auto; font-size:0.95rem; line-height:1.7;">
           ${escapeHtml(tmpl.summary)}
         </p>
+
+      ${ ins.consistencyNote ? `
+      <div style="margin:24px auto 0; max-width:620px; background:#FEF3C7; border:1px solid #F59E0B;
+        border-radius:var(--radius); padding:16px 20px;">
+        <div style="font-size:0.78rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+          color:#92400E; margin-bottom:6px;">⚠ Goal–Structure Tension</div>
+        <strong style="font-size:0.9rem; color:#78350F;">${escapeHtml(ins.consistencyNote.title)}</strong>
+        <p style="margin:8px 0 0; font-size:0.85rem; line-height:1.6; color:#92400E;">${escapeHtml(ins.consistencyNote.detail)}</p>
+      </div>` : '' }
       </div>
 
       <!-- Patterns -->
@@ -271,6 +282,15 @@ function renderResults(tmpl, name, company, scores, confidence) {
         <p style="font-size:0.9rem; line-height:1.7; margin:0;">${tmpl.aiCeiling}</p>
       </div>
 
+      ${ ins.delayRisk ? `
+      <div class="diagnosis-card" style="border-left:3px solid #F59E0B;">
+        <h3 style="margin-bottom:8px;">Where AI will specifically hit a wall in your organization</h3>
+        <div style="margin-bottom:6px;">
+          <strong style="font-size:0.9rem;">${escapeHtml(ins.delayRisk.title)}</strong>
+        </div>
+        <p style="font-size:0.9rem; line-height:1.7; margin:0;">${escapeHtml(ins.delayRisk.detail)}</p>
+      </div>` : '' }
+
       <!-- Strengths + Recommendations -->
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
         <div class="diagnosis-card">
@@ -282,6 +302,12 @@ function renderResults(tmpl, name, company, scores, confidence) {
           <div style="margin-top:8px;">${recsHtml}</div>
         </div>
       </div>
+
+      ${ ins.futureGap ? `
+      <div class="diagnosis-card" style="border-left:3px solid var(--indigo, #4338CA);">
+        <h3 style="margin-bottom:8px;">${escapeHtml(ins.futureGap.title)}</h3>
+        <p style="font-size:0.9rem; line-height:1.7; margin:0;">${escapeHtml(ins.futureGap.detail)}</p>
+      </div>` : '' }
 
       <!-- CTA -->
       <div class="results-cta">
@@ -313,7 +339,7 @@ function renderResults(tmpl, name, company, scores, confidence) {
 
 // ── Send report to user's email ──────────────────────────────
 function requestReportEmail(btn) {
-  const { tmpl, name, company } = window._result || {};
+  const { tmpl, name, company, insights: ins } = window._result || {};
   if (!tmpl) return;
   const email    = sessionStorage.getItem('ods_email')    || '';
   const lastname = sessionStorage.getItem('ods_lastname') || '';
@@ -323,7 +349,7 @@ function requestReportEmail(btn) {
   }
   btn.disabled = true;
   btn.textContent = 'Sending…';
-  sendReportToUser(tmpl, name, lastname, email, company)
+  sendReportToUser(tmpl, name, lastname, email, company, ins)
     .then(() => {
       btn.textContent = '✓ Sent to ' + email;
     })

@@ -406,3 +406,149 @@ function getContextualTemplate(topology, answers, scores) {
 
   return base;
 }
+
+// ─────────────────────────────────────────────────────────────
+// generateInsights(topology, answers)
+// Produces contextual diagnostic content from Q7, Q9, Q10.
+//  - delayRisk   : where AI will specifically hit a wall (Q7)
+//  - consistencyNote : tension between stated goals and structure (Q9)
+//  - futureGap   : what structural change is needed to get what they want (Q10)
+// ─────────────────────────────────────────────────────────────
+
+const DELAY_RISK = {
+  'Waiting for another team or approval': {
+    title: 'Approval chains and handoffs are your AI adoption ceiling',
+    detail: 'Your main bottleneck is structural: approval chains and inter-team waits will slow every AI initiative the same way they slow existing work. AI adds complexity to the coordination layer — it will not reduce it unless you reduce the number of handoffs first. Deploying AI tools on top of this structure will make the bottleneck more visible, not less.',
+  },
+  'Unclear or shifting priorities': {
+    title: 'Without stable ownership, AI pilots will not survive contact with the backlog',
+    detail: 'Shifting priorities mean AI investments will be interrupted or reprioritized before they deliver value. AI requires iteration to mature — if ownership is unclear or unstable, every AI initiative will stall at the proof-of-concept stage. Governance is the prerequisite, not the afterthought.',
+  },
+  'Technical complexity': {
+    title: 'Technical complexity is manageable — start narrow and well-scoped',
+    detail: 'Technical complexity alone is the most tractable bottleneck for AI adoption. The risk is adding AI capability on top of existing technical debt without a clear scope boundary. Start with problems where the data is clean, the process is understood, and the outcome is measurable. Complexity grows fast when those conditions are missing.',
+  },
+  'Lack of the right skills in the team': {
+    title: 'Skill concentration will slow you down and create new single points of failure',
+    detail: 'AI requires people who understand both the domain and the tool. If that knowledge lives in one or two people, you have not reduced specialist dependency — you have added a new one. Scaling AI under these conditions means either waiting for skills to diffuse or accepting that progress stops when those people are unavailable.',
+  },
+  'Too many meetings or coordination overhead': {
+    title: 'AI accelerates work within teams — it cannot replace the synchronization between them',
+    detail: 'Your coordination overhead signals that your teams are too interdependent to act without synchronizing. AI makes individual work faster, but it does not replace the synchronization that your structure requires. As AI adoption increases, the coordination cost will grow — not shrink — unless the interdependencies are reduced.',
+  },
+};
+
+const CONSISTENCY_NOTES = {
+  Resource: {
+    'Speed of innovation and experimentation': {
+      title: 'Structural tension: your design suppresses what your goals require',
+      detail: 'You said you optimize for innovation and experimentation — but your organizational structure is built for efficiency and control. These are in direct conflict. Your current design actively discourages the kind of fast, iterative experimentation that AI requires to create value. AI will surface this tension quickly: you will get proof-of-concepts that cannot scale.',
+    },
+    'Customer satisfaction and outcomes': {
+      title: 'Structural tension: your structure routes work away from customers, not toward them',
+      detail: 'Your structure is built around functional efficiency, but your stated priority is customer outcomes. Work in your organization flows through specialists and handoffs — which creates distance from the customer at every step. AI can help at the margins, but it cannot fix the structural gap between how work is organized and what you want it to produce.',
+    },
+  },
+  Delivery: {
+    'Speed of innovation and experimentation': {
+      title: 'Structural tension: your teams deliver well — but not freely enough to experiment',
+      detail: 'You said you optimize for innovation, but your structure is built for predictable delivery within defined scopes. Genuine experimentation requires teams to own outcomes that cross existing boundaries and to accept failure as a learning cost. Your current mandate structure makes that difficult — and AI will expose the gap when pilots need to scale.',
+    },
+    'Cost and resource efficiency': {
+      title: 'Mild tension: cost efficiency and delivery focus pull in different directions',
+      detail: 'Cost and resource efficiency tends to drive utilization-first thinking — keeping people busy rather than keeping value flowing. Your delivery-focused structure is already a step ahead of this, but if cost pressure grows, it can push the organization back toward functional silos and specialist bottlenecks. Watch for that regression as AI costs land on the budget.',
+    },
+  },
+  Adaptive: {
+    'Cost and resource efficiency': {
+      title: 'Structural tension: your design is built for adaptability, not efficiency',
+      detail: 'You said you optimize for cost and resource efficiency, but your organizational structure is built for adaptability, autonomy, and speed of change. These are fundamentally different operating models. Broad mandates and multi-skilled teams are more expensive to run than narrow specialists. Be explicit about which goal is actually primary — that choice has structural consequences.',
+    },
+    'Operational stability and reliability': {
+      title: 'Mild tension: adaptive structures carry inherent variability',
+      detail: 'Adaptive organizations trade some predictability for resilience and speed of response. If operational stability is your top priority, this tension will show up in AI adoption: stable operations require stable, well-governed processes — which is harder to maintain when teams have broad mandates and high autonomy. Managing this is possible, but it requires explicit governance design.',
+    },
+  },
+};
+
+const FUTURE_GAP = {
+  'Faster delivery with fewer dependencies': {
+    Resource: 'Your current structure is built on dependencies by design — specialists who need to coordinate to deliver anything meaningful. AI will not give you fewer dependencies: it will make the coordination faster, but it will not make it unnecessary. Fewer dependencies requires restructuring how teams own work end-to-end. That is a design problem before it is a tooling problem.',
+    Delivery: 'Faster delivery across team boundaries requires reducing the coordination cost at those boundaries — that is not primarily a tooling problem. AI can help with visibility and dependency tracking, but the underlying structure needs to give teams broader, more independent mandates before the dependency count drops.',
+    Adaptive: 'You are well-positioned for this. The remaining dependencies are likely at the edges of team mandates. AI can make cross-team work more visible and lower-friction — this is a practical, near-term win for your topology.',
+  },
+  'More innovation and experimentation': {
+    Resource: 'Innovation requires teams that can run experiments end-to-end without requiring approvals and handoffs at each step. Your current structure routes every decision through specialists and coordinators — which is the exact opposite of what experimentation needs. AI cannot give you innovation here. You will get tool adoption, not systemic learning. The structure needs to change first.',
+    Delivery: 'Your teams deliver well within their scope. Genuine experimentation requires teams to own outcomes that cut across existing boundaries and to accept that some of that work will not succeed. That is a structural expansion of mandate and a change in how success is measured — not a tooling upgrade.',
+    Adaptive: 'You are structurally set up for this. The risk is not structural — it is focus and governance. AI will accelerate experimentation, but only if there is a clear north star to experiment toward and a learning loop to convert results into organizational knowledge.',
+  },
+  'Less coordination overhead and fewer bottlenecks': {
+    Resource: 'Coordination overhead is a structural symptom, not a tooling problem. AI can make your coordination faster — but if the structure requires it, faster coordination is still coordination. The bottleneck will shift rather than disappear. Reducing overhead fundamentally requires reducing the number of handoffs a piece of work must cross to reach the customer.',
+    Delivery: 'Some coordination at team boundaries is inherent in your structure. AI-assisted coordination tools — automated dependency tracking, shared dashboards, intelligent scheduling — can reduce friction at those boundaries without restructuring. But eliminating overhead at scale requires expanding team mandates so fewer things need to be coordinated across boundaries.',
+    Adaptive: 'Your structure already minimizes coordination overhead. What remains is likely process-driven rather than structural. AI can address this directly — focus on automating status reporting, exception handling, and routine synchronization.',
+  },
+  'Teams that are more autonomous and accountable': {
+    Resource: 'Autonomy requires teams that own a meaningful piece of work end-to-end. Your structure partitions work by function — which means no single team owns an outcome, only a step. Giving teams more autonomy within their function does not solve the dependency problem. Real accountability for outcomes requires a fundamental redesign of how work is divided, not just more authority within silos.',
+    Delivery: 'Your teams already have autonomy within their lane. Real accountability for outcomes — not just deliverables — requires expanding those lanes to include the full customer outcome the team contributes to. That is a governance change: redefining what a team is responsible for and how its success is measured. It is achievable without a full reorganisation.',
+    Adaptive: 'You are already there structurally. The remaining work is making that autonomy meaningful in practice: clear outcome ownership, explicit team mandates, and a leadership model that reinforces rather than quietly undermines it. AI can accelerate what autonomous teams do — but only if the autonomy is real.',
+  },
+  'Better use of specialist knowledge across the org': {
+    Resource: 'Specialists in a Resource Topology are gatekeepers by design — their value comes partly from others needing them. AI can codify and distribute some of that knowledge, but if the organizational reward structure is built around being the indispensable expert, knowledge sharing will not happen without deliberate redesign of incentives and role definitions.',
+    Delivery: 'Knowledge sharing across teams is a governance problem before it is a tooling problem. AI can surface and distribute what teams know, but only if there is a mandate and incentive to share — not just to deliver. Start by making cross-team learning a measurable part of team accountability, then use AI to accelerate it.',
+    Adaptive: 'Your structure is already built for multi-learning. AI as a knowledge accelerator — helping teams expand into new domains faster, reducing cognitive load when entering unfamiliar territory — is a natural and high-leverage next step. This is where your topology creates the biggest structural advantage over competitors.',
+  },
+};
+
+function generateInsights(topology, answers) {
+  const insights = {};
+
+  // Q7: main_delay → where AI will specifically hit a wall
+  const delay = answers.main_delay;
+  if (delay) {
+    const delayKey = Object.keys(DELAY_RISK).find(k =>
+      delay === k || delay.toLowerCase().startsWith(k.toLowerCase().slice(0, 20))
+    );
+    if (delayKey) {
+      insights.delayRisk = DELAY_RISK[delayKey];
+    } else {
+      // Free-text answer — generic but honest note
+      insights.delayRisk = {
+        title: 'Your specific bottleneck will shape how AI lands',
+        detail: `You described your main delay as: "${delay}". Whatever the specific cause, it will not disappear with AI adoption — it will become more visible. Identify whether the root cause is structural (how work is divided and handed off), governance (who decides and approves), or capability (what skills exist where). AI can only help once the root cause is clear.`,
+      };
+    }
+  }
+
+  // Q9: current_optimization → consistency check against topology
+  const optimization = answers.current_optimization;
+  if (optimization && CONSISTENCY_NOTES[topology]) {
+    const optKey = Object.keys(CONSISTENCY_NOTES[topology]).find(k =>
+      optimization === k || optimization.toLowerCase().startsWith(k.toLowerCase().slice(0, 20))
+    );
+    if (optKey) {
+      insights.consistencyNote = CONSISTENCY_NOTES[topology][optKey];
+    }
+  }
+
+  // Q10: desired_future → gap statement
+  const future = answers.desired_future;
+  if (future) {
+    const futureKey = Object.keys(FUTURE_GAP).find(k =>
+      future === k || future.toLowerCase().startsWith(k.toLowerCase().slice(0, 20))
+    );
+    if (futureKey && FUTURE_GAP[futureKey][topology]) {
+      insights.futureGap = {
+        title: `"${futureKey}" — what AI will and won't give you`,
+        detail: FUTURE_GAP[futureKey][topology],
+      };
+    } else if (future) {
+      // Free-text desired future
+      insights.futureGap = {
+        title: 'Your desired outcome — what AI will and won\'t give you',
+        detail: `You want: "${future}". AI can accelerate progress toward this, but only if the structural conditions are in place. If your organization is not yet designed to support it, AI will expose the gap rather than close it. The question is not whether to adopt AI — it is whether your structure is ready to translate AI capability into this specific outcome.`,
+      };
+    }
+  }
+
+  return insights;
+}
