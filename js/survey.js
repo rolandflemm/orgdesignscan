@@ -389,9 +389,9 @@ function renderResults(tmpl, name, company, scores, confidence, insights) {
         <p>This free survey gives you a directional overview of your organization's AI readiness. But an overview is not enough to drive real change — it will raise questions, and it is not sufficiently detailed to base an organizational redesign on.</p>
         <p style="margin-top:12px;">Contact us to discuss your results and learn how the on-site AI-readiness scan can give you the depth and specificity you need to act.</p>
         <div class="results-cta-buttons">
-          <button class="btn btn-teal" onclick="openSurveyOnsiteModal()">
+          <a class="btn btn-teal" href="https://calendly.com/roland-flemm/30min?back=1" target="_blank" rel="noopener">
             Talk to an expert
-          </button>
+          </a>
           <button class="btn btn-outline" id="btn-send-pdf"
             style="color:white; border-color:rgba(255,255,255,0.5);"
             onclick="requestReportEmail(this)">
