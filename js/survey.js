@@ -291,28 +291,10 @@ function renderResults(tmpl, name, company, scores, confidence) {
           <a href="https://10xorg.com" target="_blank" class="btn btn-teal">
             Book a 1-day on-site scan
           </a>
-          <button class="btn btn-outline"
+          <button class="btn btn-outline" id="btn-send-pdf"
             style="color:white; border-color:rgba(255,255,255,0.5);"
-            onclick="showPdfPanel()">
+            onclick="requestReportEmail(this)">
             ↓ Send me the PDF
-          </button>
-        </div>
-      </div>
-
-      <!-- PDF panel (hidden by default) -->
-      <div id="pdf-panel" style="display:none; margin-top:24px; background:var(--surface);
-        border-radius:var(--radius-lg); padding:32px;">
-        <h3 style="margin-bottom:8px;">Get your report</h3>
-        <p style="font-size:0.9rem; margin-bottom:20px;">
-          Download your report as a print-ready file — open in your browser and use
-          <strong>File → Print → Save as PDF</strong> to save it.
-        </p>
-        <div style="display:flex; gap:12px; flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="downloadReport()">
-            ↓ Download report
-          </button>
-          <button class="btn btn-outline" onclick="document.getElementById('pdf-panel').style.display='none'">
-            Cancel
           </button>
         </div>
       </div>
@@ -323,13 +305,26 @@ function renderResults(tmpl, name, company, scores, confidence) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ── PDF Panel ────────────────────────────────────────────────
-function showPdfPanel() {
-  const panel = document.getElementById('pdf-panel');
-  if (panel) {
-    panel.style.display = 'block';
-    panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+// ── Send report to user's email ──────────────────────────────
+function requestReportEmail(btn) {
+  const { tmpl, name, company } = window._result || {};
+  if (!tmpl) return;
+  const email    = sessionStorage.getItem('ods_email')    || '';
+  const lastname = sessionStorage.getItem('ods_lastname') || '';
+  if (!email) {
+    btn.textContent = '⚠ No email on file';
+    return;
   }
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  sendReportToUser(tmpl, name, lastname, email, company)
+    .then(() => {
+      btn.textContent = '✓ Sent to ' + email;
+    })
+    .catch(() => {
+      btn.disabled = false;
+      btn.textContent = '↓ Send me the PDF';
+    });
 }
 
 function downloadReport() {
