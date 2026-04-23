@@ -171,7 +171,7 @@ function sendSurveyEmail(tmpl, firstname, lastname, email, company, answers, ins
         </table>
 
         ${ insights && insights.consistencyNote ? `<p><strong>Consistency note:</strong> ${insights.consistencyNote.title}</p>` : '' }
-        ${ insights && insights.delayRisk ? `<p><strong>Delay risk:</strong> ${insights.delayRisk.title}</p>` : '' }
+        ${ insights && insights.delayRisks && insights.delayRisks.length > 0 ? insights.delayRisks.map(r => `<p><strong>Delay risk:</strong> ${r.title}</p>`).join('') : '' }
         ${ insights && insights.futureGap ? `<p><strong>Future gap:</strong> ${insights.futureGap.title}</p>` : '' }
 
       </div>
@@ -352,11 +352,14 @@ function sendReportToUser(tmpl, firstname, lastname, email, company, insights) {
         <p style="margin:8px 0 0; font-size:13px; line-height:1.6; color:#92400E;">${insights.consistencyNote.detail}</p>
       </div>` : '' }
 
-      ${ insights && insights.delayRisk ? `
+      ${ insights && insights.delayRisks && insights.delayRisks.length > 0 ? `
       <div style="margin:20px 28px; border-left:3px solid #F59E0B; padding:16px 20px; background:#FFFBEB; border-radius:0 8px 8px 0;">
         <div style="font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#92400E; margin-bottom:8px;">Where AI will specifically hit a wall</div>
-        <strong style="font-size:14px; color:#78350F;">${insights.delayRisk.title}</strong>
-        <p style="margin:8px 0 0; font-size:13px; line-height:1.6; color:#374151;">${insights.delayRisk.detail}</p>
+        ${insights.delayRisks.map((r, i) => `
+          <div style="margin-bottom:${i < insights.delayRisks.length - 1 ? '14px' : '0'}; padding-bottom:${i < insights.delayRisks.length - 1 ? '14px' : '0'}; border-bottom:${i < insights.delayRisks.length - 1 ? '1px solid #FDE68A' : 'none'};">
+            <strong style="font-size:14px; color:#78350F;">${r.title}</strong>
+            <p style="margin:6px 0 0; font-size:13px; line-height:1.6; color:#374151;">${r.detail}</p>
+          </div>`).join('')}
       </div>` : '' }
 
       ${ insights && insights.futureGap ? `

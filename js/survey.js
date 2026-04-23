@@ -41,21 +41,33 @@ function renderQuestion() {
   const total = QUESTIONS.length;
   const pct = Math.round((currentIndex / total) * 100);
 
-  const optionsHtml = q.options.map((opt, i) => `
+  const isMulti = q.type === 'multi';
+
+  const optionsHtml = q.options.map((opt, i) => {
+    const inputType = isMulti ? 'checkbox' : 'radio';
+    const onChange  = isMulti
+      ? `onCheckboxChange('${q.id}', this, false)`
+      : `onOptionChange('${q.id}', this.value, false)`;
+    return `
     <li class="option-item">
-      <input type="radio" name="q_${q.id}" id="opt_${q.id}_${i}" value="${escapeAttr(opt)}"
-             onchange="onOptionChange('${q.id}', this.value, false)" />
+      <input type="${inputType}" name="q_${q.id}" id="opt_${q.id}_${i}" value="${escapeAttr(opt)}"
+             onchange="${onChange}" />
       <label class="option-label" for="opt_${q.id}_${i}">
         <span class="option-dot"></span>
         ${escapeHtml(opt)}
       </label>
-    </li>
-  `).join('');
+    </li>`;
+  }).join('');
 
-  const otherHtml = q.other ? `
+  const otherHtml = q.other ? (() => {
+    const inputType = isMulti ? 'checkbox' : 'radio';
+    const onChange  = isMulti
+      ? `onCheckboxChange('${q.id}', this, true)`
+      : `onOptionChange('${q.id}', '__other__', true)`;
+    return `
     <li class="option-item">
-      <input type="radio" name="q_${q.id}" id="opt_${q.id}_other" value="__other__"
-             onchange="onOptionChange('${q.id}', '__other__', true)" />
+      <input type="${inputType}" name="q_${q.id}" id="opt_${q.id}_other" value="__other__"
+             onchange="${onChange}" />
       <label class="option-label" for="opt_${q.id}_other">
         <span class="option-dot"></span>
         Other
@@ -63,8 +75,8 @@ function renderQuestion() {
       <input type="text" class="other-input" id="other_${q.id}"
              placeholder="Please describe…"
              oninput="onOtherInput('${q.id}')" />
-    </li>
-  ` : '';
+    </li>`;
+  })() : '';
 
   container.innerHTML = `
     <div class="question-wrap">
@@ -81,6 +93,7 @@ function renderQuestion() {
       <div class="question-card">
         <div class="question-number">Question ${currentIndex + 1}</div>
         <div class="question-text">${escapeHtml(q.text)}</div>
+        ${q.hint ? `<p class="question-hint">${escapeHtml(q.hint)}</p>` : ''}
         <ul class="options-list">
           ${optionsHtml}
           ${otherHtml}
@@ -99,22 +112,39 @@ function renderQuestion() {
   `;
 
   // Restore previous answer if navigating back
-  if (answers[q.id]) {
-    const val = answers[q.id];
-    const isOther = !q.options.includes(val);
-    if (isOther && q.other) {
-      const otherRadio = document.getElementById(`opt_${q.id}_other`);
-      if (otherRadio) {
-        otherRadio.checked = true;
-        const otherInput = document.getElementById(`other_${q.id}`);
-        if (otherInput) { otherInput.value = val; otherInput.classList.add('visible'); }
-      }
+  if (answers[q.id] !== undefined) {
+    if (isMulti && Array.isArray(answers[q.id])) {
+      answers[q.id].forEach(val => {
+        const idx = q.options.indexOf(val);
+        if (idx !== -1) {
+          const cb = document.getElementById(`opt_${q.id}_${idx}`);
+          if (cb) cb.checked = true;
+        } else if (q.other) {
+          // "Other" free-text value
+          const otherCb    = document.getElementById(`opt_${q.id}_other`);
+          const otherInput = document.getElementById(`other_${q.id}`);
+          if (otherCb)    otherCb.checked = true;
+          if (otherInput) { otherInput.value = val; otherInput.classList.add('visible'); }
+        }
+      });
+      document.getElementById('btn-next').disabled = answers[q.id].length === 0;
     } else {
-      const radio = [...document.querySelectorAll(`input[name="q_${q.id}"]`)]
-        .find(r => r.value === val);
-      if (radio) radio.checked = true;
+      const val = answers[q.id];
+      const isOther = !q.options.includes(val);
+      if (isOther && q.other) {
+        const otherRadio = document.getElementById(`opt_${q.id}_other`);
+        if (otherRadio) {
+          otherRadio.checked = true;
+          const otherInput = document.getElementById(`other_${q.id}`);
+          if (otherInput) { otherInput.value = val; otherInput.classList.add('visible'); }
+        }
+      } else {
+        const radio = [...document.querySelectorAll(`input[name="q_${q.id}"]`)]
+          .find(r => r.value === val);
+        if (radio) radio.checked = true;
+      }
+      document.getElementById('btn-next').disabled = false;
     }
-    document.getElementById('btn-next').disabled = false;
   }
 }
 
@@ -134,13 +164,56 @@ function onOptionChange(qId, value, isOther) {
 
 function onOtherInput(qId) {
   const val = document.getElementById(`other_${qId}`).value.trim();
-  answers[qId] = val;
-  document.getElementById('btn-next').disabled = val.length === 0;
+  const q   = QUESTIONS.find(q => q.id === qId);
+  if (q && q.type === 'multi') {
+    // Keep all known-option answers, replace any previous free-text
+    if (!Array.isArray(answers[qId])) answers[qId] = [];
+    answers[qId] = answers[qId].filter(a => q.options.includes(a));
+    if (val) answers[qId].push(val);
+    document.getElementById('btn-next').disabled = answers[qId].length === 0;
+  } else {
+    answers[qId] = val;
+    document.getElementById('btn-next').disabled = val.length === 0;
+  }
+}
+
+function onCheckboxChange(qId, el, isOther) {
+  const q          = QUESTIONS.find(q => q.id === qId);
+  const knownOpts  = q ? q.options : [];
+  const otherInput = document.getElementById(`other_${qId}`);
+
+  if (isOther) {
+    if (otherInput) otherInput.classList.toggle('visible', el.checked);
+    if (!el.checked) {
+      // Remove any free-text value that was entered
+      if (Array.isArray(answers[qId])) {
+        answers[qId] = answers[qId].filter(a => knownOpts.includes(a));
+      }
+    }
+    // If just checked but no text yet, Next stays disabled
+  } else {
+    if (!Array.isArray(answers[qId])) answers[qId] = [];
+    if (el.checked) {
+      if (!answers[qId].includes(el.value)) answers[qId].push(el.value);
+    } else {
+      answers[qId] = answers[qId].filter(v => v !== el.value);
+    }
+  }
+
+  // Enable Next when at least one answer exists (including valid other text)
+  const arr        = Array.isArray(answers[qId]) ? answers[qId] : [];
+  const otherReady = document.getElementById(`opt_${qId}_other`)?.checked
+                     && (otherInput?.value.trim() || '') !== '';
+  document.getElementById('btn-next').disabled = !(arr.length > 0 || otherReady);
 }
 
 function goNext() {
-  const q = QUESTIONS[currentIndex];
-  if (!answers[q.id]) return;
+  const q   = QUESTIONS[currentIndex];
+  const ans = answers[q.id];
+  const hasAnswer = q.type === 'multi'
+    ? Array.isArray(ans) && ans.length > 0
+    : !!ans;
+  if (!hasAnswer) return;
   if (currentIndex < QUESTIONS.length - 1) {
     currentIndex++;
     renderQuestion();
@@ -282,13 +355,14 @@ function renderResults(tmpl, name, company, scores, confidence, insights) {
         <p style="font-size:0.9rem; line-height:1.7; margin:0;">${tmpl.aiCeiling}</p>
       </div>
 
-      ${ ins.delayRisk ? `
+      ${ ins.delayRisks && ins.delayRisks.length > 0 ? `
       <div class="diagnosis-card" style="border-left:3px solid #F59E0B;">
-        <h3 style="margin-bottom:8px;">Where AI will specifically hit a wall in your organization</h3>
-        <div style="margin-bottom:6px;">
-          <strong style="font-size:0.9rem;">${escapeHtml(ins.delayRisk.title)}</strong>
-        </div>
-        <p style="font-size:0.9rem; line-height:1.7; margin:0;">${escapeHtml(ins.delayRisk.detail)}</p>
+        <h3 style="margin-bottom:16px;">Where AI will specifically hit a wall in your organization</h3>
+        ${ins.delayRisks.map((r, i) => `
+          <div style="margin-bottom:${i < ins.delayRisks.length - 1 ? '20px' : '0'}; padding-bottom:${i < ins.delayRisks.length - 1 ? '20px' : '0'}; border-bottom:${i < ins.delayRisks.length - 1 ? '1px solid var(--border)' : 'none'};">
+            <strong style="font-size:0.9rem;">${escapeHtml(r.title)}</strong>
+            <p style="font-size:0.9rem; line-height:1.7; margin:8px 0 0;">${escapeHtml(r.detail)}</p>
+          </div>`).join('')}
       </div>` : '' }
 
       <!-- Strengths + Recommendations -->

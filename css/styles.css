@@ -456,7 +456,13 @@ footer p {
   font-size: 1.35rem;
   color: var(--green-dark);
   line-height: 1.4;
-  margin-bottom: 32px;
+  margin-bottom: 12px;
+}
+.question-hint {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0 0 24px;
 }
 
 /* Answer options */

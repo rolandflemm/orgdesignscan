@@ -503,20 +503,27 @@ function generateInsights(topology, answers) {
   const insights = {};
 
   // Q7: main_delay → where AI will specifically hit a wall
-  const delay = answers.main_delay;
-  if (delay) {
-    const delayKey = Object.keys(DELAY_RISK).find(k =>
-      delay === k || delay.toLowerCase().startsWith(k.toLowerCase().slice(0, 20))
-    );
-    if (delayKey) {
-      insights.delayRisk = DELAY_RISK[delayKey];
-    } else {
-      // Free-text answer — generic but honest note
-      insights.delayRisk = {
-        title: 'Your specific bottleneck will shape how AI lands',
-        detail: `You described your main delay as: "${delay}". Whatever the specific cause, it will not disappear with AI adoption — it will become more visible. Identify whether the root cause is structural (how work is divided and handed off), governance (who decides and approves), or capability (what skills exist where). AI can only help once the root cause is clear.`,
-      };
-    }
+  // main_delay is now a multi-select: may be a string (legacy) or array
+  const delayRaw   = answers.main_delay;
+  const delayItems = Array.isArray(delayRaw) ? delayRaw : (delayRaw ? [delayRaw] : []);
+
+  if (delayItems.length > 0) {
+    const risks = [];
+    delayItems.forEach(delay => {
+      const delayKey = Object.keys(DELAY_RISK).find(k =>
+        delay === k || delay.toLowerCase().startsWith(k.toLowerCase().slice(0, 20))
+      );
+      if (delayKey) {
+        risks.push(DELAY_RISK[delayKey]);
+      } else {
+        // Free-text answer — generic but honest note
+        risks.push({
+          title: 'Your specific bottleneck will shape how AI lands',
+          detail: `You described a delay as: "${delay}". Whatever the specific cause, it will not disappear with AI adoption — it will become more visible. Identify whether the root cause is structural (how work is divided and handed off), governance (who decides and approves), or capability (what skills exist where). AI can only help once the root cause is clear.`,
+        });
+      }
+    });
+    if (risks.length > 0) insights.delayRisks = risks;
   }
 
   // Q9: current_optimization → consistency check against topology

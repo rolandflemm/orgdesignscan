@@ -89,7 +89,8 @@ const QUESTIONS = [
     id: 'main_delay',
     section: 'Coordination & Dependencies',
     text: 'What most often slows down getting work to customers?',
-    type: 'single',
+    hint: 'Multiple answers can apply',
+    type: 'multi',
     options: [
       'Waiting for another team or approval',
       'Unclear or shifting priorities',
