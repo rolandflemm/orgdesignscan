@@ -707,3 +707,8 @@ footer p {
 }
 .resource-card h3 { margin-bottom: 6px; }
 .resource-card p { font-size: 0.9rem; margin-bottom: 12px; }
+
+/* Survey results: stack two-column sections on mobile */
+@media (max-width: 700px) {
+  .results-2col { grid-template-columns: 1fr !important; }
+}

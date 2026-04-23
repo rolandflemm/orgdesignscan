@@ -366,7 +366,7 @@ function renderResults(tmpl, name, company, scores, confidence, insights) {
       </div>` : '' }
 
       <!-- Strengths + Recommendations -->
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
+      <div class="results-2col" style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
         <div class="diagnosis-card">
           <h3>Strengths</h3>
           <ul style="padding-left:18px; margin-top:8px;">${strengthsHtml}</ul>
