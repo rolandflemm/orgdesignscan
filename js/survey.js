@@ -423,13 +423,49 @@ function requestReportEmail(btn) {
   }
   btn.disabled = true;
   btn.textContent = 'Sending…';
-  sendReportToUser(tmpl, name, lastname, email, company, ins)
+
+  const reset = () => {
+    btn.disabled    = false;
+    btn.textContent = '↓ Send me the PDF';
+  };
+
+  // Guard: if sendReportToUser throws synchronously (e.g. while building
+  // the HTML template), catch it and re-enable the button.
+  let promise;
+  try {
+    promise = sendReportToUser(tmpl, name, lastname, email, company, ins);
+  } catch (e) {
+    console.error('[ODS] sendReportToUser threw synchronously:', e);
+    reset();
+    return;
+  }
+
+  // Guard: if EmailJS isn't ready the function returns a rejected Promise,
+  // but make sure we always have a thenable before chaining.
+  if (!promise || typeof promise.then !== 'function') {
+    reset();
+    return;
+  }
+
+  // Timeout: if the EmailJS call hangs for > 30 s, give up gracefully.
+  let settled = false;
+  const timer = setTimeout(() => {
+    if (!settled) { settled = true; reset(); }
+  }, 30000);
+
+  promise
     .then(() => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
       btn.textContent = '✓ Sent to ' + email;
     })
-    .catch(() => {
-      btn.disabled = false;
-      btn.textContent = '↓ Send me the PDF';
+    .catch(err => {
+      console.error('[ODS] sendReportToUser rejected:', err);
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      reset();
     });
 }
 
