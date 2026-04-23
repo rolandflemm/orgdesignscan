@@ -390,7 +390,7 @@ function renderResults(tmpl, name, company, scores, confidence, insights) {
         <p style="margin-top:12px;">Contact us to discuss your results and learn how the on-site AI-readiness scan can give you the depth and specificity you need to act.</p>
         <div class="results-cta-buttons">
           <button class="btn btn-teal" onclick="openSurveyOnsiteModal()">
-            Book an appointment
+            Talk to an expert
           </button>
           <button class="btn btn-outline" id="btn-send-pdf"
             style="color:white; border-color:rgba(255,255,255,0.5);"
