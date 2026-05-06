@@ -11,7 +11,7 @@ function initEmailJS() {
 
 /* ── Contact form submission ─────────────────────────────────
    Triggered when visitor fills in the landing page modal.     */
-function sendContactEmail(firstname, lastname, email, company, subject) {
+function sendContactEmail(firstname, lastname, email, company, subject, role) {
   if (!_emailjsReady()) return;
   subject = subject || 'orgscan - coldcontact form submission';
   const cfg = window.ODS_CONFIG.emailjs;
@@ -34,6 +34,10 @@ function sendContactEmail(firstname, lastname, email, company, subject) {
             </td>
           </tr>
           <tr>
+            <td style="padding:10px 12px;border-bottom:1px solid #E0E7FF;font-weight:bold;font-size:14px;">Role</td>
+            <td style="padding:10px 12px;border-bottom:1px solid #E0E7FF;font-size:14px;">${role || '—'}</td>
+          </tr>
+          <tr>
             <td style="padding:10px 12px;font-weight:bold;font-size:14px;">Company</td>
             <td style="padding:10px 12px;font-size:14px;">${company || '—'}</td>
           </tr>
@@ -53,7 +57,7 @@ function sendContactEmail(firstname, lastname, email, company, subject) {
 /* ── Survey submission ───────────────────────────────────────
    Triggered after survey is scored. Sends full result +
    submitted answers to roland@orgtopologies.com.             */
-function sendSurveyEmail(tmpl, firstname, lastname, email, company, answers, insights) {
+function sendSurveyEmail(tmpl, firstname, lastname, email, company, answers, insights, role) {
   if (!_emailjsReady()) return;
   const cfg = window.ODS_CONFIG.emailjs;
 
@@ -111,6 +115,10 @@ function sendSurveyEmail(tmpl, firstname, lastname, email, company, answers, ins
             <td style="padding:9px 12px;border-bottom:1px solid #E0E7FF;font-size:14px;">
               <a href="mailto:${email}" style="color:#4338CA;">${email}</a>
             </td>
+          </tr>
+          <tr>
+            <td style="padding:9px 12px;border-bottom:1px solid #E0E7FF;font-weight:bold;font-size:14px;">Role</td>
+            <td style="padding:9px 12px;border-bottom:1px solid #E0E7FF;font-size:14px;">${role || '—'}</td>
           </tr>
           <tr>
             <td style="padding:9px 12px;font-weight:bold;font-size:14px;">Company</td>

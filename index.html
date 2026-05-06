@@ -394,6 +394,10 @@
           <label for="userCompany">Company name</label>
           <input type="text" id="userCompany" name="company" placeholder="Acme Corp" required autocomplete="organization" />
         </div>
+        <div class="form-group">
+          <label for="userRole">Your role or function</label>
+          <input type="text" id="userRole" name="role" placeholder="e.g. CEO, Head of Product, Agile Coach" autocomplete="organization-title" />
+        </div>
         <button type="submit" id="modal-submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;">
           Start the survey &rarr;
         </button>
@@ -441,11 +445,13 @@
       const last    = document.getElementById('userLastName').value.trim();
       const email   = document.getElementById('userEmail').value.trim();
       const company = document.getElementById('userCompany').value.trim();
+      const role    = document.getElementById('userRole').value.trim();
       sessionStorage.setItem('ods_name',     first);
       sessionStorage.setItem('ods_lastname', last);
       sessionStorage.setItem('ods_email',    email);
       sessionStorage.setItem('ods_company',  company);
-      sendContactEmail(first, last, email, company);
+      sessionStorage.setItem('ods_role',     role);
+      sendContactEmail(first, last, email, company, null, role);
       if (_modalMode === 'book') {
         window.open('https://calendly.com/roland-flemm/30min?back=1', '_blank');
         closeModal();

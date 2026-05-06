@@ -251,8 +251,9 @@ function submitSurvey() {
     const lastname = sessionStorage.getItem('ods_lastname') || '';
     const email    = sessionStorage.getItem('ods_email')    || '';
     const company  = sessionStorage.getItem('ods_company')  || '';
+    const role     = sessionStorage.getItem('ods_role')     || '';
     renderResults(tmpl, name, company, scores, confidence, insights);
-    sendSurveyEmail(tmpl, name, lastname, email, company, answers, insights);
+    sendSurveyEmail(tmpl, name, lastname, email, company, answers, insights, role);
   }, 1200);
 }
 
