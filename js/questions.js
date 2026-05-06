@@ -86,6 +86,17 @@ const QUESTIONS = [
     other: false,
   },
   {
+    id: 'team_type',
+    section: 'Coordination & Dependencies',
+    text: 'If you have teams, what kind of teams are they?',
+    type: 'single',
+    options: [
+      'Single-function (people with the same specialism grouped together)',
+      'Cross-functional (different specialisms combined in one team)',
+    ],
+    other: false,
+  },
+  {
     id: 'main_delay',
     section: 'Coordination & Dependencies',
     text: 'What most often slows down getting work to customers?',
